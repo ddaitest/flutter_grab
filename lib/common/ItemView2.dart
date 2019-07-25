@@ -3,6 +3,7 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
 import 'package:flutter_grab/manager/beans.dart';
+import 'package:flutter_grab/pages/detail.dart';
 
 const Color c1 = Color(0xFF222222);
 const Color c2 = Color(0xFF444444);
@@ -69,14 +70,14 @@ class ItemView2 extends StatelessWidget {
                 ],
         ),
       ),
-//      onTap: () {
-//        Navigator.push(
-//          context,
-//          MaterialPageRoute(
-//              builder: (context) => DetailPage(event.phone, event.start,
-//                  event.end, event.remark, event.time)),
-//        );
-//      },
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DetailPage(event.phone, event.start,
+                  event.end, event.remark, event.time)),
+        );
+      },
     );
   }
 

@@ -9,8 +9,11 @@ class AboutPage extends StatefulWidget {
 }
 
 class AboutPageState extends State<AboutPage> {
+  TextStyle listTitleStyle = TextStyle(fontSize: 18);
+  TextStyle listSubTitleStyle = TextStyle(fontSize: 13);
   String localVersionName = '';
-  String telphoneNum = '1234567';
+  String mobileTelphoneNum = '15801040555';
+  String telphoneNum = '010-56422595';
   String thirdMessage = '';
 
   initValue() async {
@@ -40,6 +43,7 @@ class AboutPageState extends State<AboutPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
+              iconSize: 30,
               icon: Icon(
                 Icons.arrow_back,
                 color: colorPrimaryDark,
@@ -56,56 +60,111 @@ class AboutPageState extends State<AboutPage> {
   }
 
   _getBody() {
-    return Column(
+    return Center(
+        child: Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Column(
           children: <Widget>[
-            Container(
-//              padding: EdgeInsets.only(top: 100.0),
-              child: Image.asset(
-                'images/icon.png',
-              ),
+            Image.asset(
+              'images/icon.png',
             ),
-            Container(
-              padding: EdgeInsets.only(top: 0.0),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
               child: Text(
-                localVersionName,
+                '无忧车道',
                 style: TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 25.0,
                   color: Colors.black,
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                'Version $localVersionName',
+                style: TextStyle(
+                  fontSize: 25.0,
+                  color: Colors.black,
+                ),
+              ),
+            )
           ],
         ),
-        Container(
-//          padding: EdgeInsets.only(top: 50.0),
-          child: Text(
-            thirdMessage,
-            style: TextStyle(
-              fontSize: 20.0,
-              color: Colors.black,
-            ),
-          ),
-        ),
-        Container(
-//          padding: const EdgeInsets.only(top: 100.0),
-          child: FlatButton(
-            onPressed: () {
-              launchcaller('tel:' + telphoneNum);
-            },
-            child: Column(
-              children: <Widget>[
-                Text(
-                  '联系电话：' + telphoneNum,
-                  style: TextStyle(fontSize: 20, color: Colors.black),
+        Column(
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: ListTile(
+//                contentPadding: const EdgeInsets.all(5),
+                title: Text(
+                  '商务合作',
+                  style: listTitleStyle,
                 ),
-              ],
+                subtitle: Text(
+                  '$mobileTelphoneNum  $telphoneNum',
+                  style: listSubTitleStyle,
+                ),
+                onTap: _showPhoneCard,
+              ),
             ),
-          ),
-        ),
+            Container(
+              margin: const EdgeInsets.only(top: 3.0),
+              color: Colors.white,
+              child: ListTile(
+                title: Text('用户须知'),
+                onTap: null,
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 3.0),
+              color: Colors.white,
+              child: ListTile(
+                title: Text('关于我们'),
+                onTap: null,
+              ),
+            )
+          ],
+        )
+
+//          Container(
+//            child: FlatButton(
+//              onPressed: () {
+//                launchcaller('tel:' + telphoneNum);
+//              },
+//              child: Column(
+//                children: <Widget>[
+//                  Text(
+//                    '联系电话：' + telphoneNum,
+//                    style: TextStyle(fontSize: 20, color: Colors.black),
+//                  ),
+//                ],
+//              ),
+//            ),
+//          ),
       ],
+    ));
+  }
+
+  Future<void> _showPhoneCard() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          content: ListView(
+            children: <Widget>[
+              ListTile(
+                title: Text('aaaaaaa'),
+              ),
+              ListTile(
+                title: Text('aaaaaaa'),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }
