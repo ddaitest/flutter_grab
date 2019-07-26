@@ -43,7 +43,8 @@ class AboutPageState extends State<AboutPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-              iconSize: 30,
+              color: Color(0xff5680fa),
+              iconSize: 35,
               icon: Icon(
                 Icons.arrow_back,
                 color: colorPrimaryDark,
@@ -58,7 +59,6 @@ class AboutPageState extends State<AboutPage> {
     setState(() {
       localVersionName = packageInfo.version;
     });
-    print('#########$localVersionName');
   }
 
   _getBody() {
