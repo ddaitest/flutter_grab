@@ -69,7 +69,7 @@ class AboutPageState extends State<AboutPage> {
         Column(
           children: <Widget>[
             Image.asset(
-              'images/icon.png',
+              'images/icon.jpeg',
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
