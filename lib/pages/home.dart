@@ -125,6 +125,16 @@ class MyHomeState extends State<HomePage>
           backgroundColor: Colors.transparent,
           centerTitle: false,
           elevation: 0,
+          leading: Builder(builder: (BuildContext context) {
+            return IconButton(
+              color: Color(0xff5680fa),
+              icon: Icon(Icons.list),
+              iconSize: 35,
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          }),
           actions: <Widget>[
             IconButton(
               onPressed: () {
@@ -138,6 +148,59 @@ class MyHomeState extends State<HomePage>
             ),
             SizedBox(width: 20),
           ],
+        ),
+        drawer: Drawer(
+          //侧边栏按钮Drawer
+          child: ListView(
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                //Material内置控件
+                accountName: Text('UserName'), //用户名
+                accountEmail: Text('example@126.com'), //用户邮箱
+                currentAccountPicture: GestureDetector(
+                  //用户头像
+                  onTap: null,
+                  child: CircleAvatar(
+                    //圆形图标控件
+                    backgroundImage: NetworkImage(
+                        'https://upload.jianshu.io/users/upload_avatars/7700793/dbcf94ba-9e63-4fcf-aa77-361644dd5a87?imageMogr2/auto-orient/strip|imageView2/1/w/240/h/240'), //图片调取自网络
+                  ),
+                ),
+              ),
+              ListTile(
+                  //第一个功能项
+                  title: Text('First Page'),
+                  trailing: Icon(Icons.arrow_upward),
+                  onTap: () {
+                    Navigator.of(context).pop();
+//                    Navigator.of(context).push(new MaterialPageRoute(
+//                        builder: (BuildContext context) => new SidebarPage()));
+                  }),
+              ListTile(
+                  //第二个功能项
+                  title: Text('Second Page'),
+                  trailing: Icon(Icons.arrow_right),
+                  onTap: () {
+                    Navigator.of(context).pop();
+//                    Navigator.of(context).push(new MaterialPageRoute(
+//                        builder: (BuildContext context) => new SidebarPage()));
+                  }),
+              ListTile(
+                  //第二个功能项
+                  title: Text('关于'),
+                  trailing: Icon(Icons.error_outline),
+                  onTap: () {
+                    _gotoAbout();
+                  }),
+              Divider(), //分割线控件
+              ListTile(
+                //退出按钮
+                title: Text('退出登录'),
+                trailing: Icon(Icons.exit_to_app),
+                onTap: () => Navigator.of(context).pop(), //点击后收起侧边栏
+              ),
+            ],
+          ),
         ),
 
         // Set the TabBar view as the body of the Scaffold
@@ -273,23 +336,23 @@ class MyHomeState extends State<HomePage>
     return showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                title: Text('确定退出吗?'),
-                content: Text('退出后将不能收到最新的拼车信息'),
-                actions: <Widget>[
-                  FlatButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    child: new Text('是'),
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: new Text('否'),
-                  ),
-                ],
+            title: Text('确定退出吗?'),
+            content: Text('退出后将不能收到最新的拼车信息'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: new Text('是'),
               ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: new Text('否'),
+              ),
+            ],
+          ),
         ) ??
         false;
   }

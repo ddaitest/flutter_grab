@@ -68,6 +68,7 @@ flutter:
 
   assets:
     - images/icon.png
+    - images/icon.jpeg
     - images/Splash_first.png
     - images/lake.jpg
     - images/splash_ad.png
