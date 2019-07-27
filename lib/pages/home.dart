@@ -127,7 +127,7 @@ class MyHomeState extends State<HomePage>
           elevation: 0,
           leading: Builder(builder: (BuildContext context) {
             return IconButton(
-              color: Color(0xff5680fa),
+              color: colorPrimary,
               icon: Icon(Icons.list),
               iconSize: 35,
               onPressed: () {
@@ -135,19 +135,19 @@ class MyHomeState extends State<HomePage>
               },
             );
           }),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                _gotoAbout();
-              },
-              icon: Icon(
-                Icons.error_outline,
-                size: 30,
-                color: colorPrimary,
-              ),
-            ),
-            SizedBox(width: 20),
-          ],
+//          actions: <Widget>[
+//            IconButton(
+//              onPressed: () {
+//                _gotoAbout();
+//              },
+//              icon: Icon(
+//                Icons.error_outline,
+//                size: 30,
+//                color: colorPrimary,
+//              ),
+//            ),
+//            SizedBox(width: 20),
+//          ],
         ),
         drawer: Drawer(
           //侧边栏按钮Drawer
@@ -161,16 +161,14 @@ class MyHomeState extends State<HomePage>
                   //用户头像
                   onTap: null,
                   child: CircleAvatar(
-                    //圆形图标控件
-                    backgroundImage: NetworkImage(
-                        'https://upload.jianshu.io/users/upload_avatars/7700793/dbcf94ba-9e63-4fcf-aa77-361644dd5a87?imageMogr2/auto-orient/strip|imageView2/1/w/240/h/240'), //图片调取自网络
+                    backgroundImage: new AssetImage('images/icon.jpeg'),
                   ),
                 ),
               ),
               ListTile(
                   //第一个功能项
-                  title: Text('First Page'),
-                  trailing: Icon(Icons.arrow_upward),
+                  title: Text('发布历史'),
+                  trailing: Icon(Icons.history),
                   onTap: () {
                     Navigator.of(context).pop();
 //                    Navigator.of(context).push(new MaterialPageRoute(
@@ -178,19 +176,25 @@ class MyHomeState extends State<HomePage>
                   }),
               ListTile(
                   //第二个功能项
-                  title: Text('Second Page'),
-                  trailing: Icon(Icons.arrow_right),
+                  title: Text('个人主页'),
+                  trailing: Icon(Icons.assignment_ind),
                   onTap: () {
                     Navigator.of(context).pop();
-//                    Navigator.of(context).push(new MaterialPageRoute(
-//                        builder: (BuildContext context) => new SidebarPage()));
                   }),
               ListTile(
-                  //第二个功能项
+                  //第三个功能项
+                  title: Text('修改个人资料'),
+                  trailing: Icon(Icons.edit),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  }),
+              ListTile(
+                  //第四个功能项
                   title: Text('关于'),
                   trailing: Icon(Icons.error_outline),
                   onTap: () {
                     _gotoAbout();
+                    Navigator.of(context).pop(null);
                   }),
               Divider(), //分割线控件
               ListTile(
@@ -310,7 +314,7 @@ class MyHomeState extends State<HomePage>
                       child: MaterialButton(
                         minWidth: 250,
                         height: 50,
-                        color: Colors.blue,
+                        color: colorPrimary,
                         onPressed: () {
                           launchcaller(_comparePlatform());
                         },

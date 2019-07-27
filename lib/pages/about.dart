@@ -43,11 +43,10 @@ class AboutPageState extends State<AboutPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-              color: Color(0xff5680fa),
               iconSize: 35,
               icon: Icon(
                 Icons.arrow_back,
-                color: colorPrimaryDark,
+                color: colorPrimary,
               ),
               onPressed: () => Navigator.of(context).pop(null)),
         ),
@@ -70,6 +69,8 @@ class AboutPageState extends State<AboutPage> {
           children: <Widget>[
             Image.asset(
               'images/icon.jpeg',
+              width: 100,
+              height: 100,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -86,7 +87,7 @@ class AboutPageState extends State<AboutPage> {
               child: Text(
                 'Version $localVersionName',
                 style: TextStyle(
-                  fontSize: 25.0,
+                  fontSize: 15.0,
                   color: Colors.black,
                 ),
               ),
@@ -121,6 +122,16 @@ class AboutPageState extends State<AboutPage> {
                   Clipboard.setData(new ClipboardData(text: 'wycdkf'));
                   Fluttertoast.showToast(
                       msg: "已复制，打开微信直接粘贴即可添加",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIos: 2,
+                      backgroundColor: Colors.black12,
+                      textColor: Colors.black,
+                      fontSize: 14.0);
+                },
+                onTap: () {
+                  Fluttertoast.showToast(
+                      msg: "长按可复制微信号",
                       toastLength: Toast.LENGTH_SHORT,
                       gravity: ToastGravity.CENTER,
                       timeInSecForIos: 2,

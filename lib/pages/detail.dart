@@ -51,7 +51,7 @@ class DetailState extends State<DetailPage> {
               iconSize: 30,
               icon: Icon(
                 Icons.arrow_back,
-                color: colorPrimaryDark,
+                color: colorPrimary,
               ),
               onPressed: () => Navigator.of(context).pop(null)),
         ),
