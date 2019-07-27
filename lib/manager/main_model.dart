@@ -9,6 +9,9 @@ import 'package:flutter_grab/manager/beans.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'account_manager.dart';
+import 'beans2.dart';
+
 typedef DaiListener = int Function(bool hasMore);
 
 class MainModel extends Model {
@@ -34,20 +37,12 @@ class MainModel extends Model {
 
   PageDataStatus _vehicleStatus = PageDataStatus.LOADING;
 
-//  getPassengerPageStatus() => _passengerStatus;
-
-//  getVehiclePageStatus() => _vehicleStatus;
-
   getPageStatus(PageType type) =>
       (type == PageType.FindVehicle) ? _vehicleStatus : _passengerStatus;
 
   bool _passengerHasMore = true;
 
   bool _vehicleHasMore = true;
-
-//  passengerHasMore() => _passengerHasMore;
-
-//  vehicleHasMore() => _vehicleHasMore;
 
   getHasMore(PageType type) =>
       (type == PageType.FindVehicle) ? _vehicleHasMore : _passengerHasMore;
@@ -79,10 +74,6 @@ class MainModel extends Model {
 
   ///车找人的数据
   List<BannerInfo> _bannerList = new List();
-
-//  getVehicleList() => _vehicleList;
-
-//  getPassengerList() => _passengerList;
 
   getListData(PageType type) =>
       (type == PageType.FindVehicle) ? _vehicleList : _passengerList;
@@ -190,32 +181,6 @@ class MainModel extends Model {
     notifyListeners();
   }
 
-//  /// 请求 Vehicle List, num after 表示从哪个timestamp 开始load more.
-//  queryVehicleList2(num after, Function done) async {
-//    var condition = _findVehicle ?? SearchCondition();
-//    Response response = await API.queryEvents(
-//      FindType.FindVehicle.index,
-//      after: after,
-//      pickup: condition.pickup,
-//      dropOff: condition.dropoff,
-//      time: condition.time,
-//    );
-//    final parsed = json.decode(response.data);
-//    var resultCode = parsed["code"] ?? 0;
-//    var resultData = parsed["data"];
-//    if (resultCode == 200 && resultData != null) {
-//      final newData =
-//          resultData.map<Event>((json) => Event.fromJson(json)).toList();
-//
-//      if (after == 0) {
-//        _vehicleList.clear();
-//      }
-//      _vehicleList.addAll(newData);
-//      done();
-//      notifyListeners();
-//    }
-//  }
-
   //Search end.
   queryBanner(PageType pageType) async {
     Response response = await API.queryBanners(0);
@@ -246,8 +211,6 @@ class MainModel extends Model {
       'publish_time': '0',
       'publish_id': publishId,
     };
-//    String dataURL = "http://39.96.16.125:8082/api/event/publish";
-//    http.Response response = await http.post(dataURL, body: body);
     return API.publish(body).then((response) {
       final parsed = json.decode(response.data);
       var resultCode = parsed['code'] ?? 0;
@@ -258,6 +221,78 @@ class MainModel extends Model {
       print("DDAI= onError");
       return -1;
     });
+  }
+
+  UserInfo userInfo;
+
+  updateUserInfo() {
+    if (userInfo != null) {
+      getUserInfo(userInfo.id).then((e) {
+        print("_updateUserInfo 2 $e");
+        if (e)
+          AccountManager.getAccount().then((i) {
+            print("_updateUserInfo 3");
+            if (i != null) {
+              userInfo = i;
+              notifyListeners();
+            }
+          });
+      });
+    }
+  }
+
+  init() {
+    AccountManager.getAccount().then((info) {
+      print("_updateUserInfo 1 $info");
+      userInfo = info;
+      updateUserInfo();
+    });
+  }
+
+  Future<bool> sendCode(String phone) async {
+    Response response = await API2.sendCode(phone);
+    final parsed = json.decode(response.data);
+    var resultCode = parsed['code'] ?? 0;
+    return (resultCode == 200);
+  }
+
+  Future<int> login(String phone, String code) async {
+    Response response = await API2.login(phone, code);
+    final parsed = json.decode(response.data);
+    var resultData = parsed['data'];
+    var resultCode = parsed['code'] ?? 0;
+    if (resultCode == 200 && resultData != null) {
+      return resultData['userId'] ?? -1;
+    }
+    return -1;
+  }
+
+  Future<bool> getUserInfo(int uid) async {
+    if (uid == null || uid < 0) return null;
+    Response response = await API2.getUserInfo(uid);
+    final parsed = json.decode(response.data);
+    var resultCode = parsed['code'] ?? 0;
+    var resultData = parsed['data'];
+    if (resultCode == 200 && resultData != null) {
+      print("getUserInfo 1");
+      userInfo = UserInfo.fromJson(resultData);
+      return AccountManager.saveAccount(json.encode(resultData));
+    }
+    print("getUserInfo 2");
+    return false;
+  }
+
+  Future<bool> update(int id, String nick, int gender, String profile) async {
+    Response response = await API2.updateUserInfo(id, nick, gender, profile);
+    final parsed = json.decode(response.data);
+    var resultCode = parsed['code'] ?? 0;
+    bool result = (resultCode == 200);
+    if (result) {
+      userInfo.nickName = nick;
+      userInfo.gender = gender;
+      userInfo.profile = profile;
+    }
+    return result;
   }
 }
 

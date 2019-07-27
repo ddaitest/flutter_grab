@@ -133,7 +133,7 @@ class API2 {
     return dio.post("user/sms/send", queryParameters: params);
   }
 
-  static login(String phone,String code) {
+  static login(String phone, String code) {
     var params = Map<String, dynamic>();
     params['mobileno'] = phone;
     params['vcode'] = code;
@@ -147,5 +147,13 @@ class API2 {
     return dio.post("user/back/getMsgByUserId", queryParameters: params);
   }
 
-
+  static updateUserInfo(
+      int id, String nick, int gender,  String profile) {
+    var params = Map<String, dynamic>();
+    params['id'] = id;
+    params['nickName'] = nick;
+    params['gender'] = gender;
+    params['profile'] = profile;
+    return dio.post("user/back/update", queryParameters: params);
+  }
 }

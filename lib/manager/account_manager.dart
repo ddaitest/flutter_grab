@@ -1,15 +1,42 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'api.dart';
+import 'beans2.dart';
 
 class AccountManager {
   static const String KEY = "ACCOUNT";
 
-  static Future<bool> isLogin() async {
+//  static Future<bool> isLogin() async {
+//    SharedPreferences prefs = await SharedPreferences.getInstance();
+//    print("AccountManager.isLogin() ${(prefs.getString(KEY) != null)}");
+//    return prefs.getString(KEY) != null;
+//  }
+
+  static Future<bool> saveAccount(String accountJSON) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(KEY) != null;
+    print("AccountManager.saveAccount()");
+    prefs.setString(KEY, accountJSON);
+    return true;
   }
 
-  static Future saveAccount(String accountJSON) async {
+  static Future<UserInfo> getAccount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(KEY, accountJSON);
+    String jsonData = prefs.getString(KEY) ?? "";
+    if (jsonData != null) {
+      final parsed = json.decode(jsonData);
+      return UserInfo.fromJson(parsed);
+    }
+    return null;
   }
+
+  static Future logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("AccountManager.logout()");
+    return prefs.remove(KEY);
+  }
+
+
 }

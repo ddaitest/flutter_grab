@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
+import 'package:flutter_grab/manager/account_manager.dart';
 import 'package:flutter_grab/pages/publish.dart';
 import 'package:package_info/package_info.dart';
 
 import '../test.dart';
 import 'about.dart';
+import 'edit_profile.dart';
 import 'first.dart';
+import 'login.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -186,7 +189,8 @@ class MyHomeState extends State<HomePage>
                   title: Text('修改个人资料'),
                   trailing: Icon(Icons.edit),
                   onTap: () {
-                    Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (context) => EditProfilePage()));
                   }),
               ListTile(
                   //第四个功能项
@@ -201,7 +205,12 @@ class MyHomeState extends State<HomePage>
                 //退出按钮
                 title: Text('退出登录'),
                 trailing: Icon(Icons.exit_to_app),
-                onTap: () => Navigator.of(context).pop(), //点击后收起侧边栏
+                onTap: () {
+                  AccountManager.logout().then((_) {
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (context) => LoginPage()));
+                  });
+                }, //点击后收起侧边栏
               ),
             ],
           ),

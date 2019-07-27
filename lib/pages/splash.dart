@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_grab/manager/main_model.dart';
 import 'package:flutter_grab/manager/splash_model.dart';
 import 'package:flutter_grab/pages/home.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
@@ -20,15 +21,19 @@ class SplashState extends State<SplashPage> {
   static const length = 3;
   final pageIndexNotifier = ValueNotifier<int>(0);
 
-  SplashModel model;
+  SplashModel model = SplashModel();
+  MainModel mainModel;
 
   @override
   void initState() {
     super.initState();
-    if (model == null) {
-      model = SplashModel();
-    }
+//    if (model == null) {
+//      model = SplashModel();
+//    }
     model.initValue();
+    Future.delayed(Duration.zero, () {
+      mainModel = mainModel ?? MainModel.of(context);
+    });
   }
 
   @override
@@ -50,7 +55,7 @@ class SplashState extends State<SplashPage> {
   }
 
   _gotoNextPage() {
-    if (model.hasLogin) {
+    if (mainModel.userInfo != null) {
       _gotoHomePage();
     } else {
       _gotoLogin();
@@ -61,7 +66,7 @@ class SplashState extends State<SplashPage> {
       context, MaterialPageRoute(builder: (context) => HomePage()));
 
   _gotoLogin() => Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => LoginPage()..showBack=true));
+      context, MaterialPageRoute(builder: (context) => LoginPage()));
 
   _welcomePage() {
     return Stack(

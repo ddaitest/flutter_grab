@@ -37,14 +37,14 @@ class SplashModel extends Model {
 
   bool get showWelcome => _showWelcome;
 
-  bool hasLogin = false;
+//  bool hasLogin = false;
 
   initValue() async {
     _queryAdData();
     _queryUpdateData();
-    AccountManager.isLogin().then((result) {
-      hasLogin = result;
-    });
+//    AccountManager.isLogin().then((result) {
+//      hasLogin = result;
+//    });
   }
 
   ///广告数据

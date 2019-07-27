@@ -56,6 +56,7 @@ InputDecoration getDecoration(String label) {
         UnderlineInputBorder(borderSide: BorderSide(color: colorGrey)),
     enabledBorder:
         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey[200])),
+    counterText: '',
   );
 }
 

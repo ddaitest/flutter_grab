@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
-import 'package:flutter_grab/manager/account_manager.dart';
-import 'package:flutter_grab/manager/api.dart';
+import 'package:flutter_grab/manager/main_model.dart';
 
 import '../configs.dart';
 import 'home.dart';
@@ -33,7 +29,13 @@ class LoginState extends State<LoginPage> {
   bool enableButton = true;
   int _counter = 0;
 
+  MainModel model;
+
   _sendCode(BuildContext context) {
+    if (phoneController.text.length != 11) {
+      showSnackBar(context, "请输入11位手机号");
+      return;
+    }
     setState(() {
       _counter = SMS_RESEND;
       enableButton = false;
@@ -50,7 +52,7 @@ class LoginState extends State<LoginPage> {
         });
       },
     );
-    LoginManager.sendCode(phoneController.text).then((result) {
+    model.sendCode(phoneController.text).then((result) {
       showSnackBar(context, result ? "发送成功" : "发送失败");
     }, onError: (e) {
       showSnackBar(context, "发送失败");
@@ -59,20 +61,41 @@ class LoginState extends State<LoginPage> {
 
   _login(BuildContext context) {
     showLoadingDialog(context, "登录中");
-    LoginManager.login(phoneController.text, codeController.text).then((uid) {
-      LoginManager.getUserInfo(uid).then((result) {
+    model.login(phoneController.text, codeController.text).then(
+      (uid) => model.getUserInfo(uid),
+      onError: (e) {
+        print("_loginFail 1 $e");
+        _loginFail(context);
+      },
+    ).then((result) {
+      print("step2 result = $result");
+      if (result) {
         closeLoadingDialog(context);
         _gotoHomePage();
-      });
+      } else {
+        _loginFail(context);
+      }
     }, onError: (e) {
-      closeLoadingDialog(context);
-      showSnackBar(context, "登录失败");
+      print("_loginFail 2 $e");
+      _loginFail(context);
     });
+  }
+
+  _loginFail(BuildContext context) {
+    closeLoadingDialog(context);
+    showSnackBar(context, "登录失败");
   }
 
   _gotoHomePage() => Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => HomePage()));
 
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      model = model ?? MainModel.of(context);
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,10 +143,11 @@ class LoginState extends State<LoginPage> {
                   ]),
               child: Column(
                 children: <Widget>[
-                  TextFormField(
+                  TextField(
                     decoration: getDecoration("手机号："),
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
+                    maxLength: 11,
                   ),
                   SizedBox(height: 40),
                   Row(
@@ -133,6 +157,7 @@ class LoginState extends State<LoginPage> {
                         child: TextFormField(
                             decoration: getDecoration("验证码："),
                             controller: codeController,
+                            maxLength: 6,
                             keyboardType: TextInputType.number),
                       ),
                       SizedBox(width: 10),
@@ -214,35 +239,5 @@ class LoginState extends State<LoginPage> {
         ),
       ),
     );
-  }
-}
-
-class LoginManager {
-  static Future<bool> sendCode(String phone) async {
-    Response response = await API2.sendCode(phone);
-    final parsed = json.decode(response.data);
-    var resultCode = parsed['code'] ?? 0;
-    return (resultCode == 200);
-  }
-
-  static Future<int> login(String phone, String code) async {
-    Response response = await API2.login(phone, code);
-    final parsed = json.decode(response.data);
-    var resultData = parsed['data'];
-    var resultCode = parsed['code'] ?? 0;
-    if (resultCode == 200 && resultData != null) {
-      return resultData['userId'] ?? -1;
-    }
-    return -1;
-  }
-
-  static Future<bool> getUserInfo(int uid) async {
-    Response response = await API2.getUserInfo(uid);
-    final parsed = json.decode(response.data);
-    var resultCode = parsed['code'] ?? 0;
-    if (resultCode == 200) {
-      return true;
-    }
-    return false;
   }
 }

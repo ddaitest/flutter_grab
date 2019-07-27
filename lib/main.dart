@@ -29,6 +29,7 @@ class MyAppState extends State<MyApp> {
     _startupJpush();
     API.init();
     API2.init();
+    mainModel.init();
   }
 
   @override
