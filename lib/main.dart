@@ -28,6 +28,7 @@ class MyAppState extends State<MyApp> {
     UMengAnalytics.beginPageView("StartUp");
     _startupJpush();
     API.init();
+    API2.init();
   }
 
   @override

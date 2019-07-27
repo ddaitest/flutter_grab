@@ -59,3 +59,39 @@ getDialogData() async {
   dataMap["showCardGoto"] = prefs.getString("showCard_goto") ?? "";
   return dataMap;
 }
+
+showSnackBar(BuildContext context, String word) {
+  Scaffold.of(context).showSnackBar(SnackBar(
+    content: Text(word, textAlign: TextAlign.center),
+    backgroundColor: colorPrimary,
+  ));
+}
+
+enum DialogDemoAction {
+  cancel,
+  discard,
+  disagree,
+  agree,
+}
+
+Future<DialogDemoAction> showLoadingDialog(BuildContext context, String word) {
+  return showDialog<DialogDemoAction>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(word),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                LinearProgressIndicator(),
+              ],
+            ),
+          ),
+        );
+      });
+}
+
+closeLoadingDialog(BuildContext context) {
+  Navigator.pop(context, DialogDemoAction.cancel);
+}

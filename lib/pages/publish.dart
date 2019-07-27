@@ -4,14 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/date_time_picker.dart';
 import 'package:flutter_grab/common/theme.dart';
+import 'package:flutter_grab/common/utils.dart';
 import 'package:flutter_grab/manager/main_model.dart';
-
-enum DialogDemoAction {
-  cancel,
-  discard,
-  disagree,
-  agree,
-}
 
 class PublishPage extends StatelessWidget {
   final PageType pageType;
@@ -107,25 +101,12 @@ class MyCustomFormState extends State<MyCustomForm> {
             '0')
         .then((result) {
       print("result=$result");
-      Navigator.pop(context, DialogDemoAction.cancel);
+//      Navigator.pop(context, DialogDemoAction.cancel);
+      closeLoadingDialog(context);
       Navigator.pop(context);
     });
 
-    return showDialog<DialogDemoAction>(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("发布中"),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  LinearProgressIndicator(),
-                ],
-              ),
-            ),
-          );
-        });
+    return showLoadingDialog(context, "发布中");
   }
 
   @override

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 ThemeData getTheme() {
   return ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: Colors.grey,
+      brightness: Brightness.light,
+      primaryColor: Colors.white,
+      backgroundColor: Colors.white,
+//      unselectedWidgetColor: Colors.grey,
       textTheme: TextTheme(subhead: textStyleLabel));
 }
 
@@ -38,6 +40,11 @@ const TextStyle textStyleLabel = const TextStyle(
 const TextStyle textStylePublish = const TextStyle(
   fontSize: 20.0,
   color: colorPrimaryDark,
+);
+
+const TextStyle textButtonSmall = const TextStyle(
+  fontSize: 14.0,
+  color: Colors.white,
 );
 
 ///发布 和 搜索中 输入框的样式，主要是下划线和label

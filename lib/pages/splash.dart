@@ -7,6 +7,7 @@ import 'package:flutter_grab/pages/home.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../configs.dart';
 import 'login.dart';
 
 class SplashPage extends StatefulWidget {
@@ -60,7 +61,7 @@ class SplashState extends State<SplashPage> {
       context, MaterialPageRoute(builder: (context) => HomePage()));
 
   _gotoLogin() => Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => LoginPage()));
+      context, MaterialPageRoute(builder: (context) => LoginPage()..showBack=true));
 
   _welcomePage() {
     return Stack(
@@ -161,7 +162,7 @@ class SplashState extends State<SplashPage> {
   }
 
   _splashPage(String image, String action) {
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: SPLASH_TIME), () {
       _gotoNextPage();
     });
     if (image != null) {
