@@ -7,6 +7,8 @@ import 'package:flutter_grab/pages/home.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'login.dart';
+
 class SplashPage extends StatefulWidget {
   @override
   SplashState createState() => SplashState();
@@ -46,8 +48,19 @@ class SplashState extends State<SplashPage> {
     _gotoHomePage();
   }
 
+  _gotoNextPage() {
+    if (model.hasLogin) {
+      _gotoHomePage();
+    } else {
+      _gotoLogin();
+    }
+  }
+
   _gotoHomePage() => Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (context) => HomePage()));
+
+  _gotoLogin() => Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => LoginPage()));
 
   _welcomePage() {
     return Stack(
@@ -69,19 +82,19 @@ class SplashState extends State<SplashPage> {
           pageIndexNotifier: pageIndexNotifier,
           length: length,
           normalBuilder: (animationController, index) => Circle(
-                size: 8.0,
-                color: Colors.black87,
-              ),
+            size: 8.0,
+            color: Colors.black87,
+          ),
           highlightedBuilder: (animationController, index) => ScaleTransition(
-                scale: CurvedAnimation(
-                  parent: animationController,
-                  curve: Curves.ease,
-                ),
-                child: Circle(
-                  size: 8.0,
-                  color: Colors.white,
-                ),
-              ),
+            scale: CurvedAnimation(
+              parent: animationController,
+              curve: Curves.ease,
+            ),
+            child: Circle(
+              size: 8.0,
+              color: Colors.white,
+            ),
+          ),
         ),
       ],
     );
@@ -149,7 +162,7 @@ class SplashState extends State<SplashPage> {
 
   _splashPage(String image, String action) {
     Timer(const Duration(seconds: 3), () {
-      _gotoHomePage();
+      _gotoNextPage();
     });
     if (image != null) {
       return GestureDetector(

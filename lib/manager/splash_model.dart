@@ -8,6 +8,8 @@ import 'package:package_info/package_info.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'account_manager.dart';
+
 class SplashModel extends Model {
   /// Wraps [ScopedModel.of] for this [Model].
   static SplashModel of(BuildContext context) =>
@@ -35,20 +37,15 @@ class SplashModel extends Model {
 
   bool get showWelcome => _showWelcome;
 
+  bool hasLogin = false;
+
   initValue() async {
     _queryAdData();
     _queryUpdateData();
-//    SharedPreferences prefs = await SharedPreferences.getInstance();
-//    _showWelcome = prefs.getBool("welcome") ?? true;
-//    _splashUrl = prefs.getString("splash_url") ?? null;
-//    _splashGoto = prefs.getString("splash_goto") ?? null;
-//    notifyListeners();
+    AccountManager.isLogin().then((result) {
+      hasLogin = result;
+    });
   }
-
-//  clickWelcome() async {
-//    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-//    sharedPreferences.setBool("welcome", false);
-//  }
 
   ///广告数据
   _queryAdData() async {

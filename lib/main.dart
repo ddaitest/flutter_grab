@@ -8,6 +8,8 @@ import 'package:flutter_jpush/flutter_jpush.dart';
 import 'package:flutter_umeng_analytics_fork/flutter_umeng_analytics_fork.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'common/theme.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -34,7 +36,7 @@ class MyAppState extends State<MyApp> {
         model: mainModel,
         child: new MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(),
+          theme: getTheme(),
           home: new SplashPage(),
 //          routes: <String, WidgetBuilder>{
 //            '/publish': (BuildContext context) => PublishPage(),

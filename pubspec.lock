@@ -8,27 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.3.5"
-  amap_base_core:
-    dependency: transitive
-    description:
-      name: amap_base_core
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.5+1"
-  amap_base_location:
-    dependency: "direct main"
-    description:
-      name: amap_base_location
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.0+1"
-  amap_base_search:
-    dependency: "direct main"
-    description:
-      name: amap_base_search
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.1"
   async:
     dependency: transitive
     description:
@@ -277,13 +256,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
-  permission_handler:
-    dependency: transitive
-    description:
-      name: permission_handler
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.2.1+1"
   quiver:
     dependency: transitive
     description:
