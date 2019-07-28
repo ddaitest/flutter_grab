@@ -34,7 +34,7 @@ int compareVersion(String a, String b) {
   var as = a.split(".").map((string) => int.tryParse(string));
   var bs = b.split(".").map((string) => int.tryParse(string));
   int x, y;
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < as.length; i++) {
     x = as.elementAt(i);
     y = bs.elementAt(i);
     if (x != y) {

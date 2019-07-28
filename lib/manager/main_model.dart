@@ -223,17 +223,17 @@ class MainModel extends Model {
     });
   }
 
-  UserInfo userInfo;
+  UserInfo _userInfo;
 
   updateUserInfo() {
-    if (userInfo != null) {
-      getUserInfo(userInfo.id).then((e) {
+    if (_userInfo != null) {
+      getUserInfo(_userInfo.id).then((e) {
         print("_updateUserInfo 2 $e");
         if (e)
           AccountManager.getAccount().then((i) {
             print("_updateUserInfo 3");
             if (i != null) {
-              userInfo = i;
+              _userInfo = i;
               notifyListeners();
             }
           });
@@ -244,19 +244,33 @@ class MainModel extends Model {
   init() {
     AccountManager.getAccount().then((info) {
       print("_updateUserInfo 1 $info");
-      userInfo = info;
+      _userInfo = info;
       updateUserInfo();
     });
   }
 
+  ///接受到的最新的短信验证码。
+  String _code = "";
+
+  String get code => _code;
+
+  UserInfo get userInfo => _userInfo;
+
   Future<bool> sendCode(String phone) async {
     Response response = await API2.sendCode(phone);
     final parsed = json.decode(response.data);
+    var resultData = parsed['data'];
     var resultCode = parsed['code'] ?? 0;
-    return (resultCode == 200);
+    if (resultCode == 200 && resultData != null) {
+      _code = "${resultData['randomNum']}";
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   Future<int> login(String phone, String code) async {
+    if (code != _code) return -1;
     Response response = await API2.login(phone, code);
     final parsed = json.decode(response.data);
     var resultData = parsed['data'];
@@ -275,22 +289,22 @@ class MainModel extends Model {
     var resultData = parsed['data'];
     if (resultCode == 200 && resultData != null) {
       print("getUserInfo 1");
-      userInfo = UserInfo.fromJson(resultData);
+      _userInfo = UserInfo.fromJson(resultData);
       return AccountManager.saveAccount(json.encode(resultData));
     }
     print("getUserInfo 2");
     return false;
   }
 
-  Future<bool> update(int id, String nick, int gender, String profile) async {
-    Response response = await API2.updateUserInfo(id, nick, gender, profile);
+  Future<bool> update(String nick, int gender, String profile) async {
+    Response response = await API2.updateUserInfo(_userInfo.id, nick, gender, profile);
     final parsed = json.decode(response.data);
     var resultCode = parsed['code'] ?? 0;
     bool result = (resultCode == 200);
     if (result) {
-      userInfo.nickName = nick;
-      userInfo.gender = gender;
-      userInfo.profile = profile;
+      _userInfo.nickName = nick;
+      _userInfo.gender = gender;
+      _userInfo.profile = profile;
     }
     return result;
   }

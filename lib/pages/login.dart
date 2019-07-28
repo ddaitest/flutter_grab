@@ -20,7 +20,7 @@ class LoginState extends State<LoginPage> {
 //  int timer = 0;
   bool showBack = false;
 
-  final _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final phoneController = TextEditingController();
   final codeController = TextEditingController();
@@ -31,64 +31,6 @@ class LoginState extends State<LoginPage> {
 
   MainModel model;
 
-  _sendCode(BuildContext context) {
-    if (phoneController.text.length != 11) {
-      showSnackBar(context, "请输入11位手机号");
-      return;
-    }
-    setState(() {
-      _counter = SMS_RESEND;
-      enableButton = false;
-    });
-    Timer.periodic(
-      Duration(seconds: 1),
-      (timer) {
-        setState(() {
-          _counter--;
-          if (_counter < 1) {
-            timer.cancel();
-            enableButton = true;
-          }
-        });
-      },
-    );
-    model.sendCode(phoneController.text).then((result) {
-      showSnackBar(context, result ? "发送成功" : "发送失败");
-    }, onError: (e) {
-      showSnackBar(context, "发送失败");
-    });
-  }
-
-  _login(BuildContext context) {
-    showLoadingDialog(context, "登录中");
-    model.login(phoneController.text, codeController.text).then(
-      (uid) => model.getUserInfo(uid),
-      onError: (e) {
-        print("_loginFail 1 $e");
-        _loginFail(context);
-      },
-    ).then((result) {
-      print("step2 result = $result");
-      if (result) {
-        closeLoadingDialog(context);
-        _gotoHomePage();
-      } else {
-        _loginFail(context);
-      }
-    }, onError: (e) {
-      print("_loginFail 2 $e");
-      _loginFail(context);
-    });
-  }
-
-  _loginFail(BuildContext context) {
-    closeLoadingDialog(context);
-    showSnackBar(context, "登录失败");
-  }
-
-  _gotoHomePage() => Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (context) => HomePage()));
-
   @override
   void initState() {
     Future.delayed(Duration.zero, () {
@@ -96,8 +38,19 @@ class LoginState extends State<LoginPage> {
     });
     super.initState();
   }
+
+  @override
+  void dispose() {
+    phoneController.dispose();
+    codeController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (TEST) {
+      codeController.text = "${model?.code}";
+    }
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -240,4 +193,62 @@ class LoginState extends State<LoginPage> {
       ),
     );
   }
+
+  _sendCode(BuildContext context) {
+    if (phoneController.text.length != 11) {
+      showSnackBar(context, "请输入11位手机号");
+      return;
+    }
+    setState(() {
+      _counter = SMS_RESEND;
+      enableButton = false;
+    });
+    Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        setState(() {
+          _counter--;
+          if (_counter < 1) {
+            timer.cancel();
+            enableButton = true;
+          }
+        });
+      },
+    );
+    model.sendCode(phoneController.text).then((result) {
+      showSnackBar(context, result ? "发送成功" : "发送失败");
+    }, onError: (e) {
+      showSnackBar(context, "发送失败");
+    });
+  }
+
+  _login(BuildContext context) {
+    showLoadingDialog(context, "登录中");
+    model.login(phoneController.text, codeController.text).then(
+      (uid) => model.getUserInfo(uid),
+      onError: (e) {
+        print("_loginFail 1 $e");
+        _loginFail(context);
+      },
+    ).then((result) {
+      print("step2 result = $result");
+      if (result) {
+        closeLoadingDialog(context);
+        _gotoHomePage();
+      } else {
+        _loginFail(context);
+      }
+    }, onError: (e) {
+      print("_loginFail 2 $e");
+      _loginFail(context);
+    });
+  }
+
+  _loginFail(BuildContext context) {
+    closeLoadingDialog(context);
+    showSnackBar(context, "登录失败");
+  }
+
+  _gotoHomePage() => Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (context) => HomePage()));
 }

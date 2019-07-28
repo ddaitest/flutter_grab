@@ -10,6 +10,7 @@ import 'package:flutter_grab/manager/account_manager.dart';
 import 'package:flutter_grab/pages/publish.dart';
 import 'package:package_info/package_info.dart';
 
+import '../manager/main_model.dart';
 import '../test.dart';
 import 'about.dart';
 import 'edit_profile.dart';
@@ -41,6 +42,8 @@ class MyHomeState extends State<HomePage>
   String localVersionName;
   String localVersionCode;
   bool canClose;
+
+  MainModel model;
 
   initValue() async {
     var dialogDataMap = await getDialogData();
@@ -91,6 +94,9 @@ class MyHomeState extends State<HomePage>
         page = controller.index;
       });
     });
+    Future.delayed(Duration.zero, () {
+      model = model ?? MainModel.of(context);
+    });
   }
 
   String getTitle() {
@@ -112,6 +118,8 @@ class MyHomeState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    model = model ?? MainModel.of(context);
+    print("avator = ${model.userInfo.avatar}");
     super.build(context);
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -158,13 +166,14 @@ class MyHomeState extends State<HomePage>
             children: <Widget>[
               UserAccountsDrawerHeader(
                 //Material内置控件
-                accountName: Text('UserName'), //用户名
-                accountEmail: Text('example@126.com'), //用户邮箱
+                accountName: Text(model.userInfo.nickName), //用户名
+                accountEmail: Text(model.userInfo.profile), //用户邮箱
                 currentAccountPicture: GestureDetector(
                   //用户头像
                   onTap: null,
                   child: CircleAvatar(
-                    backgroundImage: new AssetImage('images/icon.jpeg'),
+//                    backgroundImage: new AssetImage('images/icon.jpeg'),
+                    backgroundImage: CachedNetworkImageProvider(model.userInfo.avatar),
                   ),
                 ),
               ),
@@ -189,8 +198,10 @@ class MyHomeState extends State<HomePage>
                   title: Text('修改个人资料'),
                   trailing: Icon(Icons.edit),
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context, MaterialPageRoute(builder: (context) => EditProfilePage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditProfilePage()));
                   }),
               ListTile(
                   //第四个功能项
@@ -207,8 +218,8 @@ class MyHomeState extends State<HomePage>
                 trailing: Icon(Icons.exit_to_app),
                 onTap: () {
                   AccountManager.logout().then((_) {
-                    Navigator.pushReplacement(
-                        context, MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));
                   });
                 }, //点击后收起侧边栏
               ),

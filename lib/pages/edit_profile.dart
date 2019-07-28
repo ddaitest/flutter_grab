@@ -10,7 +10,7 @@ import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/manager/main_model.dart';
 
 class EditProfilePage extends StatelessWidget {
-  UserInfo info;
+//  UserInfo info;
 
   EditProfilePage({Key key}) : super(key: key);
 
@@ -33,21 +33,21 @@ class EditProfilePage extends StatelessWidget {
               ),
               onPressed: () => Navigator.of(context).pop(null)),
         ),
-        body: MyCustomForm()..info = info);
+        body: MyCustomForm());
   }
 }
 
 class MyCustomForm extends StatefulWidget {
-  UserInfo info;
+//  UserInfo info;
 
   @override
   MyCustomFormState createState() {
-    return MyCustomFormState()..info = info;
+    return MyCustomFormState();
   }
 }
 
 class MyCustomFormState extends State<MyCustomForm> {
-  UserInfo info;
+//  UserInfo info;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -69,9 +69,8 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   _search() {
     showLoadingDialog(context, "提交中...");
-    model.update(
-            info.id, nickController.text, gender, profileController.text)
-        .then((result) {
+    model.update(nickController.text, gender, profileController.text).then(
+        (result) {
       if (result) {
         closeLoadingDialog(context);
         Navigator.pop(context);
@@ -88,11 +87,15 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   void initState() {
     super.initState();
-    nickController.text = info.nickName;
-    profileController.text = info.profile;
-    gender = info.gender;
+
     Future.delayed(Duration.zero, () {
       model = model ?? MainModel.of(context);
+      setState(() {
+        final info = model.userInfo;
+        gender = info.gender;
+        nickController.text = info.nickName;
+        profileController.text = info.profile;
+      });
     });
   }
 

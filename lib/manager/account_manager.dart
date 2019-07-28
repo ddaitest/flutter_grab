@@ -25,7 +25,7 @@ class AccountManager {
   static Future<UserInfo> getAccount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonData = prefs.getString(KEY) ?? "";
-    if (jsonData != null) {
+    if (jsonData.isNotEmpty) {
       final parsed = json.decode(jsonData);
       return UserInfo.fromJson(parsed);
     }
