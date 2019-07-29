@@ -119,7 +119,7 @@ class MyHomeState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     model = model ?? MainModel.of(context);
-    print("avator = ${model.userInfo.avatar}");
+    print("avator = ${model.userInfo?.avatar??""}");
     super.build(context);
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -166,14 +166,14 @@ class MyHomeState extends State<HomePage>
             children: <Widget>[
               UserAccountsDrawerHeader(
                 //Material内置控件
-                accountName: Text(model.userInfo.nickName), //用户名
-                accountEmail: Text(model.userInfo.profile), //用户邮箱
+                accountName: Text(model.userInfo?.nickName??""), //用户名
+                accountEmail: Text(model.userInfo?.profile??""), //用户邮箱
                 currentAccountPicture: GestureDetector(
                   //用户头像
                   onTap: null,
                   child: CircleAvatar(
 //                    backgroundImage: new AssetImage('images/icon.jpeg'),
-                    backgroundImage: CachedNetworkImageProvider(model.userInfo.avatar),
+                    backgroundImage: CachedNetworkImageProvider(model.userInfo?.avatar??""),
                   ),
                 ),
               ),
