@@ -12,14 +12,13 @@ final TextStyle mainTitleFont = const TextStyle(
 );
 
 class DetailPage extends StatefulWidget {
-  String phone;
-  String from;
-  String to;
-  String remark;
-  num time;
-  Event2 event;
+  final String phone;
+  final String from;
+  final String to;
+  final num money;
+  final num time;
 
-  DetailPage(Event2 event);
+  DetailPage(this.phone, this.from, this.to, this.money, this.time);
 
   @override
   State<DetailPage> createState() {
@@ -68,8 +67,8 @@ class DetailState extends State<DetailPage> {
               Icons.access_time,
             ),
             _getContainer(
-              Text(_remarkmsg(), style: mainTitleFont),
-              Icons.event_note,
+              Text(widget.money.toString(), style: mainTitleFont),
+              Icons.attach_money,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 25),
@@ -90,16 +89,6 @@ class DetailState extends State<DetailPage> {
             ),
           ]),
         ));
-  }
-
-  ///remark为空时转义成"无"
-  _remarkmsg() {
-    switch (widget.remark) {
-      case (''):
-        return '无';
-      default:
-        return widget.remark;
-    }
   }
 
   ///判断是否有广告数据才展示
@@ -126,19 +115,23 @@ class DetailState extends State<DetailPage> {
   Widget _getContainer(var title, IconData leadIcon, {IconData trailIcon}) {
     return Container(
         padding: const EdgeInsets.all(5),
-        height: 80.0,
         child: Card(
           child: ListTile(
-              leading: Icon(leadIcon), trailing: Icon(trailIcon), title: title),
+            dense: true,
+            leading: Icon(leadIcon),
+            trailing: Icon(trailIcon),
+            title: title,
+          ),
         ));
   }
 
   ///位置样式
   _getRoadLine() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 2, bottom: 2),
+          padding: const EdgeInsets.only(top: 10, bottom: 10),
           child:
               _getInfoView(Icons.trip_origin, c4, widget.from, mainTitleFont),
         ),
@@ -156,7 +149,7 @@ class DetailState extends State<DetailPage> {
           color: color,
           size: 14.0,
         ),
-        SizedBox(width: 6),
+        SizedBox(width: 10),
         Expanded(
           child: Text(
             info,
