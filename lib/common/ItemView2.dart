@@ -77,7 +77,9 @@ class ItemView2 extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DetailPage(event)),
+          MaterialPageRoute(
+              builder: (context) => DetailPage(event.mobile, event.start,
+                  event.end, event.money, event.time)),
         );
       },
     );
