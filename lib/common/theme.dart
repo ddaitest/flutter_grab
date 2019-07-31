@@ -16,6 +16,21 @@ const Color colorGrey2 = const Color(0xffD6D6D6);
 const Color colorPick = Color(0xFF13D3CE);
 const Color colorDrop = Color(0xFFFF7200);
 
+const Color c1 = Color(0xFF222222);
+const Color c2 = Color(0xFF444444);
+const Color c3 = Color(0xFFD8D8D8);
+
+const TextStyle fontPhone =
+    const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: c1);
+
+const TextStyle fontInfo = const TextStyle(fontSize: 16.0, color: c2);
+
+const TextStyle fontTime1 = const TextStyle(fontSize: 16.0, color: c3);
+const TextStyle fontTime2 = const TextStyle(fontSize: 16.0, color: colorPick);
+
+const TextStyle fontCall =
+    TextStyle(fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.w500);
+
 const TextStyle textStyle1 = const TextStyle(
   fontSize: 30.0,
   color: colorPrimaryDark,

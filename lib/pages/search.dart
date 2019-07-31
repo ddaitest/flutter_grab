@@ -5,6 +5,7 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/date_time_picker.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
+import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/manager/main_model.dart';
 import 'package:amap_base/src/search/model/poi_item.dart';
 
@@ -18,24 +19,11 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(
-            "搜索 " + ((pageType == PageType.FindVehicle) ? "人找车" : "车找人"),
-            style: textStyle1,
-            textAlign: TextAlign.start,
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: colorPrimaryDark,
-              ),
-              onPressed: () => Navigator.of(context).pop(null)),
-        ),
-        body: MyCustomForm()..pageType = pageType);
+    return getCommonScaffold(
+      "搜索 " + ((pageType == PageType.FindVehicle) ? "人找车" : "车找人"),
+      body: MyCustomForm()..pageType = pageType,
+      onLeadingPressed: () => Navigator.of(context).pop(null),
+    );
   }
 }
 

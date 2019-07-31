@@ -7,6 +7,7 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/date_time_picker.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
+import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/manager/main_model.dart';
 import 'package:intl/intl.dart';
@@ -20,25 +21,11 @@ class PublishPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "发布",
-            style: textStyle1,
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: colorPrimaryDark,
-              ),
-              onPressed: () => Navigator.of(context).pop(null)),
-        ),
-        body: MyCustomForm()..pageType = pageType
-//        MyCustomForm(),
-        );
+    return getCommonScaffold(
+      "发布",
+      onLeadingPressed: () => Navigator.of(context).pop(null),
+      body: MyCustomForm()..pageType = pageType,
+    );
   }
 }
 
@@ -107,7 +94,7 @@ class MyCustomFormState extends State<MyCustomForm> {
     if (userInfo == null) {
       return null;
     }
-    final body = <String,String>{
+    final body = <String, String>{
       'ciphertext': userInfo.auth,
       'mobileNo': userInfo.mobile,
       'userId': userInfo.id.toString(),

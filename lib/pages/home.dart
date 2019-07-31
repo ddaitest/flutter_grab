@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
+import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/create_map/ddai_map.dart';
 import 'package:flutter_grab/manager/account_manager.dart';
 import 'package:flutter_grab/pages/publish.dart';
@@ -118,131 +119,24 @@ class MyHomeState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     model = model ?? MainModel.of(context);
-    print("avator = ${model.userInfo?.avatar??""}");
+    print("avator = ${model.userInfo?.avatar ?? ""}");
     super.build(context);
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: Colors.white,
+      child: getMyScaffold(
+        getTitle(),
         key: _scaffoldKey,
-        // Appbar
-        appBar: AppBar(
-          title: Text(
-            getTitle(),
-            style: textStyle1,
-            textAlign: TextAlign.start,
-          ),
-          backgroundColor: Colors.transparent,
-          centerTitle: false,
-          elevation: 0,
-          leading: Builder(builder: (BuildContext context) {
-            return IconButton(
-              color: colorPrimary,
-              icon: Icon(Icons.list),
-              iconSize: 35,
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          }),
-//          actions: <Widget>[
-//            IconButton(
-//              onPressed: () {
-//                _gotoAbout();
-//              },
-//              icon: Icon(
-//                Icons.error_outline,
-//                size: 30,
-//                color: colorPrimary,
-//              ),
-//            ),
-//            SizedBox(width: 20),
-//          ],
-        ),
-        drawer: Drawer(
-          //侧边栏按钮Drawer
-          child: ListView(
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-                //Material内置控件
-                accountName: Text(model.userInfo?.nickName??""), //用户名
-                accountEmail: Text(model.userInfo?.profile??""), //用户邮箱
-                currentAccountPicture: GestureDetector(
-                  //用户头像
-                  onTap: null,
-                  child: CircleAvatar(
-//                    backgroundImage: new AssetImage('images/icon.jpeg'),
-                    backgroundImage: CachedNetworkImageProvider(model.userInfo?.avatar??""),
-                  ),
-                ),
-              ),
-              ListTile(
-                  //第一个功能项
-                  title: Text('发布历史'),
-                  trailing: Icon(Icons.history),
-                  onTap: () {
-                    Navigator.of(context).pop();
-//                    Navigator.of(context).push(new MaterialPageRoute(
-//                        builder: (BuildContext context) => new SidebarPage()));
-                  }),
-              ListTile(
-                  //第二个功能项
-                  title: Text('个人主页'),
-                  trailing: Icon(Icons.assignment_ind),
-                  onTap: () {
-//                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DDAIScreen()));
-                  }),
-              ListTile(
-                  //第三个功能项
-                  title: Text('修改个人资料'),
-                  trailing: Icon(Icons.edit),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EditProfilePage()));
-                  }),
-              ListTile(
-                  //第四个功能项
-                  title: Text('关于'),
-                  trailing: Icon(Icons.error_outline),
-                  onTap: () {
-                    _gotoAbout();
-                    Navigator.of(context).pop(null);
-                  }),
-              Divider(), //分割线控件
-              ListTile(
-                //退出按钮
-                title: Text('退出登录'),
-                trailing: Icon(Icons.exit_to_app),
-                onTap: () {
-                  AccountManager.logout().then((_) {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
-                  });
-                }, //点击后收起侧边栏
-              ),
-            ],
-          ),
-        ),
-
-        // Set the TabBar view as the body of the Scaffold
-        body: new TabBarView(
-          // Add tabs as widgets
-          children: <Widget>[
-//            new FirstTab(),
-            Test ? TestPage() : FirstTab(),
-            new SecondTab(),
-//            new ThirdTab(),
-          ],
-          // set the controller
-          controller: controller,
-        ),
-        // Set the bottom navigation bar
+        titleAlign: TextAlign.start,
+        drawer: _getDrawer(),
+        leading: Builder(builder: (BuildContext context) {
+          return IconButton(
+            color: colorPrimary,
+            icon: Icon(Icons.list),
+            iconSize: 35,
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          );
+        }),
+        body: _getBody(),
         floatingActionButton: FloatingActionButton.extended(
           elevation: 4.0,
           backgroundColor: colorPrimary,
@@ -254,7 +148,6 @@ class MyHomeState extends State<HomePage>
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomAppBar(
-//          shape: CircularNotchedRectangle(),
           clipBehavior: Clip.antiAliasWithSaveLayer,
           notchMargin: 4.0,
           child: new TabBar(
@@ -265,6 +158,71 @@ class MyHomeState extends State<HomePage>
             controller: controller,
           ),
         ),
+      ),
+    );
+  }
+
+  _getBody() {
+    return TabBarView(
+      children: <Widget>[
+        Test ? TestPage() : FirstTab(),
+        new SecondTab(),
+      ],
+      controller: controller,
+    );
+  }
+
+  Drawer _getDrawer() {
+    return Drawer(
+      //侧边栏按钮Drawer
+      child: ListView(
+        children: <Widget>[
+          UserAccountsDrawerHeader(
+            //Material内置控件
+            accountName: Text(model.userInfo?.nickName ?? ""), //用户名
+            accountEmail: Text(model.userInfo?.profile ?? ""), //用户邮箱
+            currentAccountPicture: GestureDetector(
+              //用户头像
+              onTap: null,
+              child: CircleAvatar(
+//                    backgroundImage: new AssetImage('images/icon.jpeg'),
+                backgroundImage:
+                    CachedNetworkImageProvider(model.userInfo?.avatar ?? ""),
+              ),
+            ),
+          ),
+          ListTile(
+              title: Text('发布历史'),
+              trailing: Icon(Icons.history),
+              onTap: () {
+                Navigator.of(context).pop();
+              }),
+          ListTile(
+              title: Text('修改个人资料'),
+              trailing: Icon(Icons.edit),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => EditProfilePage()));
+              }),
+          ListTile(
+              title: Text('关于'),
+              trailing: Icon(Icons.error_outline),
+              onTap: () {
+                _gotoAbout();
+                Navigator.of(context).pop(null);
+              }),
+          Divider(), //分割线控件
+          ListTile(
+            title: Text('退出登录'),
+            trailing: Icon(Icons.exit_to_app),
+            onTap: () {
+              AccountManager.logout().then((_) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              });
+            }, //点击后收起侧边栏
+          ),
+        ],
       ),
     );
   }

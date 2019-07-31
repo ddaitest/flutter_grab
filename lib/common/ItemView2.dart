@@ -6,21 +6,6 @@ import 'package:flutter_grab/manager/beans.dart';
 import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/pages/detail.dart';
 
-const Color c1 = Color(0xFF222222);
-const Color c2 = Color(0xFF444444);
-const Color c3 = Color(0xFFD8D8D8);
-
-final TextStyle fontPhone =
-    const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: c1);
-
-final TextStyle fontInfo = const TextStyle(fontSize: 16.0, color: c2);
-
-final TextStyle fontTime1 = const TextStyle(fontSize: 16.0, color: c3);
-final TextStyle fontTime2 = const TextStyle(fontSize: 16.0, color: colorPick);
-
-final TextStyle fontCall =
-    TextStyle(fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.w500);
-
 class ItemView2 extends StatelessWidget {
   final Event2 event;
   final int index;
@@ -75,12 +60,8 @@ class ItemView2 extends StatelessWidget {
         ),
       ),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => DetailPage(event.mobile, event.start,
-                  event.end, event.money, event.time)),
-        );
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => DetailPage(event)));
       },
     );
   }

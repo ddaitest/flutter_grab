@@ -1,34 +1,37 @@
+import 'package:amap_base/amap_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_grab/common/theme.dart';
+import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/manager/beans2.dart';
 
-const Color c4 = Color(0xFF13D3CE);
-const Color c5 = Color(0xFFFF7200);
-final TextStyle mainTitleFont = const TextStyle(
-  fontSize: 18,
-);
+//const Color c4 = Color(0xFF13D3CE);
+//const Color c5 = Color(0xFFFF7200);
+//final TextStyle mainTitleFont = const TextStyle(
+//  fontSize: 18,
+//);
 
 class DetailPage extends StatefulWidget {
-  final String phone;
-  final String from;
-  final String to;
-  final num money;
-  final num time;
+  final Event2 event;
 
-  DetailPage(this.phone, this.from, this.to, this.money, this.time);
+  DetailPage(this.event);
 
   @override
   State<DetailPage> createState() {
-    return DetailState();
+    return DetailState()..event = event;
   }
 }
 
 class DetailState extends State<DetailPage> {
+  Event2 event;
   String adForDetailUrl =
       'https://img.zcool.cn/community/012de8571049406ac7251f05224c19.png@1280w_1l_2o_100sh.png';
+  LatLng start = LatLng(39.985953, 116.464719);
+  LatLng end = LatLng(39.983541, 116.46737);
+  AMapController _controller;
+
   @override
   void initState() {
     super.initState();
@@ -36,59 +39,79 @@ class DetailState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final dt = new DateTime.fromMillisecondsSinceEpoch(widget.time);
+    return getCommonScaffold(
+      "详细信息",
+      elevation: 4.toDouble(),
+      onLeadingPressed: () => Navigator.of(context).pop(null),
+      body: _getBody(),
+    );
+  }
+
+  Widget _getBody() {
+    return Column(
+      children: <Widget>[
+        Flexible(
+          child: AMapView(
+            onAMapViewCreated: (controller) {
+              _controller = controller;
+              _controller.markerClickedEvent.listen((marker) {
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text(marker.toString())));
+              });
+            },
+            amapOptions: AMapOptions(
+              compassEnabled: false,
+              zoomControlsEnabled: true,
+              logoPosition: LOGO_POSITION_BOTTOM_CENTER,
+              camera: CameraPosition(
+                target: start,
+                zoom: 15,
+              ),
+            ),
+          ),
+        ),
+        Flexible(
+          child: _getInfo(),
+        ),
+      ],
+    );
+  }
+
+  _getInfo() {
+    final dt = new DateTime.fromMillisecondsSinceEpoch(event.time);
     var date = dateFormat.format(dt);
     var time = timeFormat.format(dt);
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "拼车详情",
-            style: textStyle1,
-            textAlign: TextAlign.start,
+    return ListView(padding: EdgeInsets.all(10.0), children: <Widget>[
+      _getContainer(
+        _getRoadLine(),
+        Icons.location_on,
+      ),
+      _getContainer(
+        Text('$date  $time', style: fontInfo),
+        Icons.access_time,
+      ),
+      _getContainer(
+        Text(event.money.toString(), style: fontInfo),
+        Icons.attach_money,
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 25),
+        child: MaterialButton(
+          height: 50,
+          color: Color(0xff5680fa),
+          child: Text(
+            '马上联系 ' + '(' + event.mobile + ')',
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-              iconSize: 30,
-              icon: Icon(
-                Icons.arrow_back,
-                color: colorPrimary,
-              ),
-              onPressed: () => Navigator.of(context).pop(null)),
+          onPressed: () {
+            launchcaller('tel:' + event.mobile);
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
         ),
-        body: Center(
-          child: ListView(padding: EdgeInsets.all(10.0), children: <Widget>[
-            _getContainer(
-              _getRoadLine(),
-              Icons.location_on,
-            ),
-            _getContainer(
-              Text('$date  $time', style: mainTitleFont),
-              Icons.access_time,
-            ),
-            _getContainer(
-              Text(widget.money.toString(), style: mainTitleFont),
-              Icons.attach_money,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 25),
-              child: MaterialButton(
-                height: 50,
-                color: Color(0xff5680fa),
-                child: Text(
-                  '马上联系 ' + '(' + widget.phone + ')',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-                onPressed: () {
-                  launchcaller('tel:' + widget.phone);
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-              ),
-            ),
-          ]),
-        ));
+      ),
+    ]);
   }
 
   ///判断是否有广告数据才展示
@@ -103,9 +126,6 @@ class DetailState extends State<DetailPage> {
             width: 500,
             height: 400,
           ),
-//                onTap: () {
-//                  launch(listGoto);
-//                },
         ),
       );
     }
@@ -133,9 +153,9 @@ class DetailState extends State<DetailPage> {
         Padding(
           padding: const EdgeInsets.only(top: 10, bottom: 10),
           child:
-              _getInfoView(Icons.trip_origin, c4, widget.from, mainTitleFont),
+              _getInfoView(Icons.trip_origin, colorPick, event.start, fontInfo),
         ),
-        _getInfoView(Icons.trip_origin, c5, widget.to, mainTitleFont),
+        _getInfoView(Icons.trip_origin, colorDrop, event.end, fontInfo),
       ],
     );
   }
