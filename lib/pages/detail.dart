@@ -3,6 +3,7 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_grab/common/theme.dart';
+import 'package:flutter_grab/manager/beans2.dart';
 
 const Color c4 = Color(0xFF13D3CE);
 const Color c5 = Color(0xFFFF7200);
@@ -11,13 +12,14 @@ final TextStyle mainTitleFont = const TextStyle(
 );
 
 class DetailPage extends StatefulWidget {
-  final String phone;
-  final String from;
-  final String to;
-  final String remark;
-  final num time;
+  String phone;
+  String from;
+  String to;
+  String remark;
+  num time;
+  Event2 event;
 
-  DetailPage(this.phone, this.from, this.to, this.remark, this.time);
+  DetailPage(Event2 event);
 
   @override
   State<DetailPage> createState() {

@@ -233,7 +233,7 @@ class LoginState extends State<LoginPage> {
     ).then((result) {
       print("step2 result = $result");
       if (result) {
-        closeLoadingDialog(context);
+//        closeLoadingDialog(context);
         _gotoHomePage();
       } else {
         _loginFail(context);

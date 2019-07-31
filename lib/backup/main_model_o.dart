@@ -4,20 +4,20 @@ import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
+import 'package:flutter_grab/manager/account_manager.dart';
 import 'package:flutter_grab/manager/api.dart';
 import 'package:flutter_grab/manager/beans.dart';
+import 'package:flutter_grab/manager/beans2.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'account_manager.dart';
-import 'beans2.dart';
 
 typedef DaiListener = int Function(bool hasMore);
 
-class MainModel extends Model {
+class MainModelBackup extends Model {
   /// Wraps [ScopedModel.of] for this [Model].
-  static MainModel of(BuildContext context) =>
-      ScopedModel.of<MainModel>(context, rebuildOnChange: true);
+  static MainModelBackup of(BuildContext context) =>
+      ScopedModel.of<MainModelBackup>(context, rebuildOnChange: true);
 
   //Search begin.
   ///人找车的筛选条件
@@ -31,7 +31,7 @@ class MainModel extends Model {
     return (type == PageType.FindVehicle) ? _findVehicle : _findPassenger;
   }
 
-  final PAGE_SIZE = 10;
+  final PAGE_SIZE = 5;
 
   PageDataStatus _passengerStatus = PageDataStatus.LOADING;
 
@@ -43,10 +43,6 @@ class MainModel extends Model {
   bool _passengerHasMore = true;
 
   bool _vehicleHasMore = true;
-
-  int _vehiclePage = 0;
-
-  int _passengerPage = 0;
 
   getHasMore(PageType type) =>
       (type == PageType.FindVehicle) ? _vehicleHasMore : _passengerHasMore;
@@ -71,15 +67,15 @@ class MainModel extends Model {
 
   //List Data
   ///人找车的数据
-  List<Event2> _vehicleList = new List();
+  List<Event> _vehicleList = new List();
 
   ///车找人的数据
-  List<Event2> _passengerList = new List();
+  List<Event> _passengerList = new List();
 
-  ///banner的数据
+  ///车找人的数据
   List<BannerInfo> _bannerList = new List();
 
-  List<Event2> getListData(PageType type) =>
+  getListData(PageType type) =>
       (type == PageType.FindVehicle) ? _vehicleList : _passengerList;
 
   getBannerInfoList() => _bannerList;
@@ -94,49 +90,45 @@ class MainModel extends Model {
 
   /// 请求 Passenger List, num after 表示从哪个timestamp 开始load more.
   queryPassengerList(bool refresh, {Function done}) async {
-    int findType = 2;
     if (!refresh && !_passengerHasMore) {
       print("ERROR. NO MORE, NO REQUEST");
       return;
     }
-    if (refresh) {
-      _passengerPage = 0;
-    }
     Response response;
-    int pageNo = refresh ? 1 : _passengerPage + 1;
+    Event after = refresh ? null : _passengerList.last;
     if (_findPassenger == null) {
-      response = await API2.queryEvents(
-        findType,
-        pageNo: pageNo,
+      response = await API.queryEvents(
+        PageType.FindPassenger.index,
+        afterId: after?.id,
         pageSize: PAGE_SIZE,
       );
     } else {
-      response = await API2.searchEvents(
-        findType,
-        pickup: _findPassenger.pickup,
-        dropOff: _findPassenger.dropoff,
-        time: _findPassenger.time,
-        pageNo: pageNo,
+      response = await API.searchEvents(
+        PageType.FindPassenger.index,
+        afterId: after?.id,
+        afterTime: after?.time,
         pageSize: PAGE_SIZE,
+        time: _findPassenger.time,
+        dropOff: _findPassenger.dropoff,
+        pickup: _findPassenger.pickup,
       );
     }
     final parsed = json.decode(response.data);
     final resultCode = parsed["code"] ?? 0;
     final resultData = parsed["data"];
     if (resultCode == 200 && resultData != null) {
-      _passengerPage++;
       final dataList = resultData["list"];
-      num total = resultData["totalCount"] ?? 0;
+      num hasMore = resultData["has_more"] ?? 0;
       if (dataList != null) {
         final newData =
-            dataList.map<Event2>((json) => Event2.fromJson(json)).toList();
+            dataList.map<Event>((json) => Event.fromJson(json)).toList();
         if (refresh) {
           //refresh
           _passengerList.clear();
         }
         _passengerList.addAll(newData);
       }
-      _passengerHasMore = _passengerList.length < total;
+      _passengerHasMore = (hasMore == 1);
     }
     _passengerStatus = _passengerList.length > 0
         ? PageDataStatus.READY
@@ -146,49 +138,41 @@ class MainModel extends Model {
   }
 
   queryVehicleList(bool refresh, {Function done}) async {
-    int findType = 1;
-    if (!refresh && !_vehicleHasMore) {
-      print("ERROR. NO MORE, NO REQUEST");
-      return;
-    }
-    if (refresh) {
-      _vehiclePage = 0;
-    }
     Response response;
-    int pageNo = refresh ? 1 : _vehiclePage + 1;
+    Event after = refresh ? null : _vehicleList.last;
     if (_findVehicle == null) {
-      response = await API2.queryEvents(
-        findType,
-        pageNo: pageNo,
+      response = await API.queryEvents(
+        PageType.FindVehicle.index,
+        afterId: after?.id,
         pageSize: PAGE_SIZE,
       );
     } else {
-      response = await API2.searchEvents(
-        findType,
-        pickup: _findPassenger.pickup,
-        dropOff: _findPassenger.dropoff,
-        time: _findPassenger.time,
-        pageNo: pageNo,
+      response = await API.searchEvents(
+        PageType.FindVehicle.index,
+        afterId: after?.id,
+        afterTime: after?.time,
         pageSize: PAGE_SIZE,
+        time: _findVehicle.time,
+        dropOff: _findVehicle.dropoff,
+        pickup: _findVehicle.pickup,
       );
     }
     final parsed = json.decode(response.data);
     final resultCode = parsed["code"] ?? 0;
     final resultData = parsed["data"];
     if (resultCode == 200 && resultData != null) {
-      _vehiclePage++;
       final dataList = resultData["list"];
-      num total = resultData["totalCount"] ?? 0;
+      num hasMore = resultData["has_more"] ?? 0;
       if (dataList != null) {
         final newData =
-            dataList.map<Event2>((json) => Event2.fromJson(json)).toList();
-        if (refresh) {
+            dataList.map<Event>((json) => Event.fromJson(json)).toList();
+        if (after == null) {
           //refresh
           _vehicleList.clear();
         }
         _vehicleList.addAll(newData);
       }
-      _vehicleHasMore = _vehicleList.length < total;
+      _vehicleHasMore = (hasMore == 1);
     }
     _vehicleStatus = _vehicleList.length > 0
         ? PageDataStatus.READY
@@ -213,8 +197,21 @@ class MainModel extends Model {
     }
   }
 
-  Future<int> publish(Map<String, String> body) {
-    return API2.publish(body).then((response) {
+  Future<int> publish(DateTime dateTime, String start, String end, String phone,
+      String remark, String type, String publishId) {
+    print(
+        "<<<<==================${new DateFormat("y-M-D H:m ").format(dateTime)}");
+    final body = {
+      'start': start,
+      'end': end,
+      'time': dateTime.millisecondsSinceEpoch.toString(),
+      'phone': phone,
+      'remark': remark,
+      'type': type,
+      'publish_time': '0',
+      'publish_id': publishId,
+    };
+    return API.publish(body).then((response) {
       final parsed = json.decode(response.data);
       var resultCode = parsed['code'] ?? 0;
       var resultData = parsed['data'];
@@ -301,8 +298,7 @@ class MainModel extends Model {
   }
 
   Future<bool> update(String nick, int gender, String profile) async {
-    Response response =
-        await API2.updateUserInfo(_userInfo.id, nick, gender, profile);
+    Response response = await API2.updateUserInfo(_userInfo.id, nick, gender, profile);
     final parsed = json.decode(response.data);
     var resultCode = parsed['code'] ?? 0;
     bool result = (resultCode == 200);
@@ -329,5 +325,3 @@ class SearchCondition extends Equatable {
   ///终点
   String dropoff = "";
 }
-
-int intFromPageType(PageType type) => (type == PageType.FindVehicle) ? 1 : 2;

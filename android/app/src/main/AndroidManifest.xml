@@ -16,6 +16,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="flutter_grab">
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="926c883e181700a1d3f0f01c7ed8ea7b"/>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

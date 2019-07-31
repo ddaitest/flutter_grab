@@ -3,6 +3,7 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
 import 'package:flutter_grab/manager/beans.dart';
+import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/pages/detail.dart';
 
 const Color c1 = Color(0xFF222222);
@@ -21,14 +22,17 @@ final TextStyle fontCall =
     TextStyle(fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.w500);
 
 class ItemView2 extends StatelessWidget {
-  final Event event;
+  final Event2 event;
   final int index;
   final int type;
 
-  ItemView2(this.event, this.index, this.type);
+  ItemView2(this.event, this.index, this.type) {
+//    remark = "价格：${event.money}";
+  }
 
   @override
   Widget build(BuildContext context) {
+    String remark = "价格：${event.money}";
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
@@ -47,7 +51,7 @@ class ItemView2 extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: event.remark != null && event.remark.isNotEmpty
+          children: event.money != null && event.money > 0
               ? <Widget>[
                   _getHeader(),
                   _getPadding(),
@@ -57,7 +61,7 @@ class ItemView2 extends StatelessWidget {
                   _getPadding(),
                   _getDateTime(),
                   _getPadding(),
-                  _getRemark(),
+                  _getRemark(remark),
                 ]
               : <Widget>[
                   _getHeader(),
@@ -73,9 +77,7 @@ class ItemView2 extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => DetailPage(event.phone, event.start,
-                  event.end, event.remark, event.time)),
+          MaterialPageRoute(builder: (context) => DetailPage(event)),
         );
       },
     );
@@ -85,7 +87,7 @@ class ItemView2 extends StatelessWidget {
 
   /// 第一行: 头像, 电话, Action
   _getHeader() {
-    var phone = event.phone;
+    var phone = event.mobile;
     if (phone.length > 7) {
       phone = phone.replaceRange(3, 7, "****");
     }
@@ -169,7 +171,7 @@ class ItemView2 extends StatelessWidget {
   }
 
   ///备注
-  _getRemark() => Text(event.remark ?? "remark", style: fontX);
+  _getRemark(String remark) => Text(remark, style: fontX);
 
   ///头像
   _getAvatar() {
@@ -180,7 +182,7 @@ class ItemView2 extends StatelessWidget {
   _getAction() {
     return InkWell(
       onTap: () {
-        launchcaller('tel:' + event.phone);
+        launchcaller('tel:' + event.mobile);
       },
       child: getRoundIcon(Icons.call),
     );

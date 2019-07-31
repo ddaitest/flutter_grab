@@ -1,17 +1,11 @@
 import 'dart:async';
 
-import 'package:amap_base/src/search/model/poi_item.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/date_time_picker.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
-import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/manager/main_model.dart';
-import 'package:intl/intl.dart';
-
-import 'select_poi.dart';
 
 class PublishPage extends StatelessWidget {
   final PageType pageType;
@@ -25,7 +19,7 @@ class PublishPage extends StatelessWidget {
           title: Text(
             "发布",
             style: textStyle1,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
           ),
           backgroundColor: Colors.white,
           elevation: 0,
@@ -51,31 +45,24 @@ class MyCustomForm extends StatefulWidget {
   }
 }
 
-final dataFormat = DateFormat("y-M-D H:m ");
-
 class MyCustomFormState extends State<MyCustomForm> {
   ///false if vehicle.
-  final _formKey = GlobalKey<FormState>();
+  PageType pageType;
   MainModel model;
 
-  PageType pageType;
+  // Create a global key that will uniquely identify the Form widget and allow
+  // us to validate the form
+  //
+  // Note: This is a `GlobalKey<FormState>`, not a GlobalKey<MyCustomFormState>!
+  final _formKey = GlobalKey<FormState>();
 
   final myControllerStart = TextEditingController();
   final myControllerEnd = TextEditingController();
-  final myControllerSeat = TextEditingController();
-  final myControllerMoney = TextEditingController();
+  final myControllerPhone = TextEditingController();
   final myControllerRemark = TextEditingController();
-
-  List _startPois = List<PoiItem>();
-  List _endPois = List<PoiItem>();
-
-  PoiItem startSelected;
-  PoiItem endSelected;
 
   DateTime _fromDate = DateTime.now();
   TimeOfDay _fromTime = TimeOfDay.fromDateTime(DateTime.now());
-  GlobalKey keyStartSelected = GlobalKey<AutoCompleteTextFieldState<PoiItem>>();
-  GlobalKey keyEndSelected = GlobalKey<AutoCompleteTextFieldState<PoiItem>>();
 
   @override
   void initState() {
@@ -89,13 +76,12 @@ class MyCustomFormState extends State<MyCustomForm> {
   void dispose() {
     myControllerStart.dispose();
     myControllerEnd.dispose();
-    myControllerSeat.dispose();
-    myControllerMoney.dispose();
+    myControllerPhone.dispose();
     myControllerRemark.dispose();
     super.dispose();
   }
 
-  Future _doPublish() async {
+  _doPublish() {
     final x = DateTime(
       _fromDate.year,
       _fromDate.month,
@@ -103,43 +89,22 @@ class MyCustomFormState extends State<MyCustomForm> {
       _fromTime.hour,
       _fromTime.minute,
     );
-    UserInfo userInfo = model.userInfo;
-    if (userInfo == null) {
-      return null;
-    }
-    final body = <String,String>{
-      'ciphertext': userInfo.auth,
-      'mobileNo': userInfo.mobile,
-      'userId': userInfo.id.toString(),
-      'startTypecode': startSelected.typeCode,
-      'startAddress':
-          '${startSelected.cityName}${startSelected.adName}${startSelected.title}',
-      'startLocation': startSelected.latLonPoint.toString(),
-      'startName': startSelected.title,
-      'startAdcode': startSelected.adCode,
-      'startDistrict': startSelected.direction,
-      'endTypecode': endSelected.typeCode,
-      'endAddress':
-          '${endSelected.cityName}${endSelected.adName}${endSelected.title}',
-      'endLocation': endSelected.latLonPoint.toString(),
-      'endName': endSelected.title,
-      'endAdcode': endSelected.adCode,
-      'endDistrict': endSelected.direction,
-      'setoutTime': dataFormat.format(x),
-      'seatNum': myControllerSeat.text,
-      'money': myControllerMoney.text,
-      'remark': myControllerRemark.text,
-      'publishType': pageType == PageType.FindVehicle ? '1' : '2',
-      'publishState': type1.toString(),
-      'openId': 'undefined',
-      'formId': 'the formId is a mock one',
-    };
 
-    model.publish(body).then((result) {
-      print("result=$result");
-      closeLoadingDialog(context);
-      Navigator.pop(context);
-    });
+//    model
+//        .publish(
+//            x,
+//            myControllerStart.text,
+//            myControllerEnd.text,
+//            myControllerPhone.text,
+//            myControllerRemark.text,
+//            pageType.index.toString(),
+//            '0')
+//        .then((result) {
+//      print("result=$result");
+////      Navigator.pop(context, DialogDemoAction.cancel);
+//      closeLoadingDialog(context);
+//      Navigator.pop(context);
+//    });
 
     return showLoadingDialog(context, "发布中");
   }
@@ -154,9 +119,7 @@ class MyCustomFormState extends State<MyCustomForm> {
           padding: EdgeInsets.all(20),
           children: <Widget>[
             _getDropdown(),
-            SizedBox(height: 20),
-            _getType1(),
-            SizedBox(height: 10),
+            SizedBox(height: 30),
             Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -171,50 +134,32 @@ class MyCustomFormState extends State<MyCustomForm> {
                   ]),
               child: Column(
                 children: <Widget>[
-                  TextField(
+                  TextFormField(
                     decoration: getDecoration("出发："),
                     controller: myControllerStart,
-                    onTap: () => Navigator.push<PoiItem>(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SelectPOIPage())).then((v) {
-                      startSelected = v;
-                      print("startSelected = $v");
-                      setState(() {
-                        myControllerStart.text =
-                            '${v.cityName}-${v.adName}-${v.title}';
-                      });
-                    }),
-                  ),
-                  TextField(
-                    decoration: getDecoration("到达："),
-                    controller: myControllerEnd,
-                    onTap: () => Navigator.push<PoiItem>(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SelectPOIPage())).then((v) {
-                      endSelected = v;
-                      print("endSelected = $v");
-                      setState(() {
-                        myControllerEnd.text =
-                            '${v.cityName}-${v.adName}-${v.title}';
-                      });
-                    }),
-                  ),
-                  TextFormField(
-                    decoration: getDecoration("座位："),
-                    keyboardType: TextInputType.number,
-                    controller: myControllerSeat,
-                    validator: (x) {
-                      return x.isEmpty ? "请输入" : null;
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return '不能为空...';
+                      }
                     },
                   ),
                   TextFormField(
-                    decoration: getDecoration("价格："),
-                    keyboardType: TextInputType.number,
-                    controller: myControllerMoney,
-                    validator: (x) {
-                      return x.isEmpty ? "请输入" : null;
+                    decoration: getDecoration("到达："),
+                    controller: myControllerEnd,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return '不能为空...';
+                      }
+                    },
+                  ),
+                  TextFormField(
+                    decoration: getDecoration("联系电话："),
+                    keyboardType: TextInputType.phone,
+                    controller: myControllerPhone,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return '不能为空...';
+                      }
                     },
                   ),
                   TextFormField(
@@ -247,14 +192,6 @@ class MyCustomFormState extends State<MyCustomForm> {
               color: colorPrimary,
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  if (myControllerStart.text.isEmpty) {
-                    showSnackBar(context, "请选择出发点");
-                    return;
-                  }
-                  if (myControllerEnd.text.isEmpty) {
-                    showSnackBar(context, "请选择到打点");
-                    return;
-                  }
                   _doPublish();
                 }
               },
@@ -270,38 +207,6 @@ class MyCustomFormState extends State<MyCustomForm> {
         ),
       ),
       color: Colors.white,
-    );
-  }
-
-  int type1 = 1;
-
-  _getType1() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Radio(
-          value: 1,
-          groupValue: type1,
-          onChanged: (v) {
-            setState(() {
-              type1 = v;
-              print("xxx = $type1  v=$v");
-            });
-          },
-        ),
-        Text("普通拼车"),
-        Radio(
-          value: 2,
-          groupValue: type1,
-          onChanged: (v) {
-            setState(() {
-              type1 = v;
-              print("yyy = $type1  v=$v");
-            });
-          },
-        ),
-        Text("长期拼车")
-      ],
     );
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
 import 'package:flutter_grab/manager/beans.dart';
+import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/manager/main_model.dart';
 import 'package:flutter_grab/pages/search.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -195,6 +196,7 @@ class BasePageState extends State<BasePage> with AutomaticKeepAliveClientMixin {
         if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
           _onLoadMore();
         }
+        return false;
       },
 //      child: _list(),
       child: _scrollView(),
@@ -231,7 +233,7 @@ class BasePageState extends State<BasePage> with AutomaticKeepAliveClientMixin {
   }
 
   Widget _list() {
-    var data = model.getListData(pageType);
+    List<Event2> data = model.getListData(pageType);
     final enablePullUp = model.getHasMore(pageType);
     return SliverList(
         delegate: SliverChildBuilderDelegate(

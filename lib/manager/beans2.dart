@@ -48,6 +48,28 @@ class Event2 {
   num seat;
   String startAt;
   String endAt;
+  String remark;
+
+  factory Event2.fromSimpleJson(Map<String, dynamic> json) {
+    return Event2()
+      ..publishState = json["publishState"]
+      ..start = json["startName"]
+      ..startCity = json["startTypecode"]
+      ..end = json["endName"]
+      ..endCity = json["endTypecode"]
+      ..nickName = json["nickName"]
+      ..mobile = json["mobileNo"]
+      ..userId = json["userId"]
+      ..time = json["setoutTime"]
+      ..money = json["money"]
+      ..publishType = json["publishType"]
+      ..avatar = json["aratarurl"]
+      ..startAt = json["startLocation"]
+      ..endAt = json["endLocation"]
+      ..seat = json["seatNum"]
+      ..id = json["id"]
+      ..remark = json["remark"];
+  }
 
   factory Event2.fromJson(Map<String, dynamic> json) {
     return Event2()
@@ -66,6 +88,7 @@ class Event2 {
       ..startAt = json["startLocation"]
       ..endAt = json["endLocation"]
       ..seat = json["seatNum"]
-      ..id = json["id"];
+      ..id = json["id"]
+      ..remark = json["remark"];
   }
 }

@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/date_time_picker.dart';
 import 'package:flutter_grab/common/theme.dart';
-import 'package:flutter_grab/common/utils.dart';
 import 'package:flutter_grab/manager/main_model.dart';
-import 'package:amap_base/src/search/model/poi_item.dart';
-
-import 'select_poi.dart';
 
 class SearchPage extends StatelessWidget {
   ///表示从哪个页面进来的。 true = 人找车；false = 车找人；
@@ -65,9 +61,6 @@ class MyCustomFormState extends State<MyCustomForm> {
   DateTime _fromDate = DateTime.now();
   TimeOfDay _fromTime = TimeOfDay.fromDateTime(DateTime.now());
 
-  PoiItem startSelected;
-  PoiItem endSelected;
-
   @override
   void dispose() {
     myControllerStart.dispose();
@@ -87,8 +80,8 @@ class MyCustomFormState extends State<MyCustomForm> {
     model.updateSearchCondition(
         pageType,
         new SearchCondition(
-            pickup: startSelected.adCode,
-            dropoff: endSelected.adCode,
+            pickup: myControllerStart.text,
+            dropoff: myControllerEnd.text,
             time: x.millisecondsSinceEpoch));
     Navigator.pop(context);
   }
@@ -142,35 +135,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                 ]),
             child: Column(
               children: <Widget>[
-                TextField(
+                TextFormField(
                   decoration: getDecoration("出发："),
                   controller: myControllerStart,
-                  onTap: () => Navigator.push<PoiItem>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SelectPOIPage())).then((v) {
-                    startSelected = v;
-                    print("startSelected = ${v.adCode}");
-                    setState(() {
-                      myControllerStart.text =
-                          '${v.cityName}-${v.adName}-${v.title}';
-                    });
-                  }),
                 ),
-                TextField(
+                SizedBox(height: 20),
+                TextFormField(
                   decoration: getDecoration("到达："),
                   controller: myControllerEnd,
-                  onTap: () => Navigator.push<PoiItem>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SelectPOIPage())).then((v) {
-                    endSelected = v;
-                    print("endSelected = ${v}");
-                    setState(() {
-                      myControllerEnd.text =
-                          '${v.cityName}-${v.adName}-${v.title}';
-                    });
-                  }),
                 ),
                 SizedBox(height: 20),
                 DateTimePicker(
@@ -198,14 +170,6 @@ class MyCustomFormState extends State<MyCustomForm> {
             color: colorPrimary,
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                if (myControllerStart.text.isEmpty) {
-                  showSnackBar(context, "请选择出发点");
-                  return;
-                }
-                if (myControllerEnd.text.isEmpty) {
-                  showSnackBar(context, "请选择到打点");
-                  return;
-                }
                 _search();
               }
             },

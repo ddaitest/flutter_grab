@@ -147,13 +147,56 @@ class API2 {
     return dio.post("user/back/getMsgByUserId", queryParameters: params);
   }
 
-  static updateUserInfo(
-      int id, String nick, int gender,  String profile) {
+  static updateUserInfo(int id, String nick, int gender, String profile) {
     var params = Map<String, dynamic>();
     params['id'] = id;
     params['nickName'] = nick;
     params['gender'] = gender;
     params['profile'] = profile;
     return dio.post("user/back/update", queryParameters: params);
+  }
+
+  static queryEvents(num pageType, {num pageNo, num pageSize}) {
+    var params = Map<String, dynamic>();
+    params['publishType'] = pageType;
+
+    if (pageNo != null && pageNo > 1) {
+      params['pageNo'] = pageNo;
+    }
+    if (pageSize != null) {
+      params['pageSize'] = pageSize;
+    }
+    return dio.post("wxapplet/publish/list", queryParameters: params);
+  }
+
+  static searchEvents(num pageType,
+      {String pickup, String dropOff, num time, num pageNo, num pageSize}) {
+    var params = Map<String, dynamic>();
+    params['publishType'] = pageType;
+
+    if (pickup != null) {
+      params['startAdcode'] = pickup;
+    }
+    if (dropOff != null) {
+      params['endAdcode'] = dropOff;
+    }
+    if (time != null && time > 1) {
+      params['setoutTime'] = time;
+    }
+
+    if (pageNo != null && pageNo > 1) {
+      params['pageNo'] = pageNo;
+    }
+
+    if (pageSize != null) {
+      params['pageSize'] = pageSize;
+    }
+
+    return dio.post("wxapplet/publish/list", queryParameters: params);
+  }
+
+  ///发布
+  static Future<Response> publish(Map<String, String> body) {
+    return dio.post("user/back/publishtemplate/add", queryParameters: body);
   }
 }

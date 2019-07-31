@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:amap_base/amap_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/manager/api.dart';
 import 'package:flutter_grab/manager/main_model.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_umeng_analytics_fork/flutter_umeng_analytics_fork.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'common/theme.dart';
+import 'configs.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,6 +31,7 @@ class MyAppState extends State<MyApp> {
     _startupJpush();
     API.init();
     API2.init();
+    _setAmap();
     mainModel.init();
   }
 
@@ -66,5 +69,8 @@ class MyAppState extends State<MyApp> {
     else if (Platform.isIOS)
       UMengAnalytics.init('5cc4860a4ca357a1fe000190',
           encrypt: true, reportCrash: false);
+  }
+  _setAmap() async{
+    await AMap.init(AMAP_KEY);
   }
 }
