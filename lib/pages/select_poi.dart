@@ -105,7 +105,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-//        _getDropdown(),
+        _getDropdown(),
         TextFormField(
           decoration: getDecoration("搜索："),
           controller: myControllerStart,
