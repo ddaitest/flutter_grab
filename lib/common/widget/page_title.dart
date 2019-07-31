@@ -66,9 +66,9 @@ Scaffold getMyScaffold(
 
 Scaffold getCommonScaffold(
   String title, {
-  body: Widget,
-  elevation: double,
-  onLeadingPressed: VoidCallback,
+  Widget body,
+  double elevation = 0.0,
+  VoidCallback onLeadingPressed,
 }) {
   return Scaffold(
       appBar: AppBar(
@@ -78,7 +78,7 @@ Scaffold getCommonScaffold(
           textAlign: TextAlign.center,
         ),
         backgroundColor: Colors.white,
-        elevation: elevation ?? 0,
+        elevation: elevation ?? 0.0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,

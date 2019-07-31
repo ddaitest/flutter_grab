@@ -41,7 +41,7 @@ class DetailState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return getCommonScaffold(
       "详细信息",
-      elevation: 4.toDouble(),
+      elevation: 4.0,
       onLeadingPressed: () => Navigator.of(context).pop(null),
       body: _getBody(),
     );
