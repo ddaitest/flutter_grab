@@ -44,41 +44,6 @@ class MyCustomForm extends StatefulWidget {
   }
 }
 
-const List<String> suggestions = [
-  "Apple",
-  "Armidillo",
-  "Actual",
-  "Actuary",
-  "America",
-  "Argentina",
-  "Australia",
-  "Antarctica",
-  "Blueberry",
-  "Cheese",
-  "Danish",
-  "Eclair",
-  "Fudge",
-  "Granola",
-  "Hazelnut",
-  "Ice Cream",
-  "Jely",
-  "Kiwi Fruit",
-  "Lamb",
-  "Macadamia",
-  "Nachos",
-  "Oatmeal",
-  "Palm Oil",
-  "Quail",
-  "Rabbit",
-  "Salad",
-  "T-Bone Steak",
-  "Urid Dal",
-  "Vanilla",
-  "Waffles",
-  "Yam",
-  "Zest"
-];
-
 class MyCustomFormState extends State<MyCustomForm> {
   ///false if vehicle.
 

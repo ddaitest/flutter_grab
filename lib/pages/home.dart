@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/utils.dart';
+import 'package:flutter_grab/create_map/ddai_map.dart';
 import 'package:flutter_grab/manager/account_manager.dart';
 import 'package:flutter_grab/pages/publish.dart';
 import 'package:package_info/package_info.dart';
@@ -61,8 +62,6 @@ class MyHomeState extends State<HomePage>
 
     ///弹窗延迟3s弹出
     Timer(const Duration(seconds: 1), () {
-      print(
-          "INFO.  upgrade info :${packageInfo.version} + ${packageInfo.buildNumber} >> $version + $buildName");
       if (compareVersion(version, packageInfo.version) > 0 &&
           compareVersion(buildName.toString(), packageInfo.buildNumber) > 0) {
         upgradeCard();
@@ -191,7 +190,11 @@ class MyHomeState extends State<HomePage>
                   title: Text('个人主页'),
                   trailing: Icon(Icons.assignment_ind),
                   onTap: () {
-                    Navigator.of(context).pop();
+//                    Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DDAIScreen()));
                   }),
               ListTile(
                   //第三个功能项

@@ -177,7 +177,6 @@ class BasePageState extends State<BasePage> with AutomaticKeepAliveClientMixin {
   /// View: 列表。
   _getScrollBody() {
     var status = model.getPageStatus(pageType);
-    print("====== page status = $status ");
     if (status == PageDataStatus.READY) {
       return RefreshIndicator(
         key: _refreshIndicatorKey,
