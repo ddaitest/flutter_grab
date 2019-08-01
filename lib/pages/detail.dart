@@ -62,7 +62,7 @@ class DetailState extends State<DetailPage> {
             amapOptions: AMapOptions(
               compassEnabled: false,
               zoomControlsEnabled: true,
-              logoPosition: LOGO_POSITION_BOTTOM_CENTER,
+              logoPosition: LOGO_POSITION_BOTTOM_LEFT,
               camera: CameraPosition(
                 target: start,
                 zoom: 15,
@@ -91,7 +91,7 @@ class DetailState extends State<DetailPage> {
         Icons.access_time,
       ),
       _getContainer(
-        Text(event.money.toString(), style: fontInfo),
+        Text('${event.money.toString()} 元', style: fontInfo),
         Icons.attach_money,
       ),
       Padding(

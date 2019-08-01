@@ -17,7 +17,7 @@ class ItemView2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String remark = "价格：${event.money}";
+    String remark = "价格：${event.money} 元";
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(

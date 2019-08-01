@@ -209,7 +209,6 @@ class MyHomeState extends State<HomePage>
               trailing: Icon(Icons.error_outline),
               onTap: () {
                 _gotoAbout();
-                Navigator.of(context).pop(null);
               }),
           Divider(), //分割线控件
           ListTile(
@@ -351,8 +350,11 @@ class MyHomeState extends State<HomePage>
           builder: (context) => PublishPage(
               page == 0 ? PageType.FindPassenger : PageType.FindVehicle)));
 
-  _gotoAbout() => Navigator.push(
-      context, MaterialPageRoute(builder: (context) => AboutPage()));
+  _gotoAbout() {
+    Navigator.of(context).pop(null);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AboutPage()));
+  }
 
 //  _gotoSearch() => Navigator.push(
 //        context,
