@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/manager/beans2.dart';
+import 'package:flutter_grab/common/amapLoad.dart';
 
 //const Color c4 = Color(0xFF13D3CE);
 //const Color c5 = Color(0xFFFF7200);
@@ -35,6 +36,7 @@ class DetailState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
+//    _line();
   }
 
   @override
@@ -53,7 +55,7 @@ class DetailState extends State<DetailPage> {
         Flexible(
           child: AMapView(
             onAMapViewCreated: (controller) {
-              _controller = controller;
+              setState(() => _controller = controller);
               _controller.markerClickedEvent.listen((marker) {
                 Scaffold.of(context)
                     .showSnackBar(SnackBar(content: Text(marker.toString())));
@@ -63,10 +65,6 @@ class DetailState extends State<DetailPage> {
               compassEnabled: false,
               zoomControlsEnabled: true,
               logoPosition: LOGO_POSITION_BOTTOM_LEFT,
-              camera: CameraPosition(
-                target: start,
-                zoom: 15,
-              ),
             ),
           ),
         ),
@@ -104,7 +102,31 @@ class DetailState extends State<DetailPage> {
             style: TextStyle(fontSize: 20, color: Colors.white),
           ),
           onPressed: () {
-            launchcaller('tel:' + event.mobile);
+            loading(
+              context,
+              AMapSearch().calculateDriveRoute(
+                RoutePlanParam(
+                  from: LatLng(39.993291, 116.473188),
+                  to: LatLng(39.940474, 116.355426),
+                ),
+              ),
+            ).then((result) {
+              final allPoint = result.paths[0].steps
+                  .expand((step) => step.polyline)
+                  .toList();
+
+              result.paths[0].steps.expand((step) => step.TMCs).forEach((tmc) {
+                _controller.addPolyline((PolylineOptions(
+                    latLngList: tmc.polyline,
+                    width: 15,
+                    lineJoinType: PolylineOptions.LINE_JOIN_MITER,
+                    lineCapType: PolylineOptions.LINE_CAP_TYPE_ROUND,
+                    color: Colors.green)));
+              });
+
+              _controller.zoomToSpan(allPoint);
+            });
+//            launchcaller('tel:' + event.mobile);
           },
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -179,6 +201,33 @@ class DetailState extends State<DetailPage> {
         ),
       ],
     );
+  }
+
+  _line() {
+    loading(
+      context,
+      AMapSearch().calculateDriveRoute(
+        RoutePlanParam(
+          from: LatLng(39.993291, 116.473188),
+          to: LatLng(39.940474, 116.355426),
+        ),
+      ),
+    ).then((result) {
+      final allPoint =
+          result.paths[0].steps.expand((step) => step.polyline).toList();
+
+      result.paths[0].steps.expand((step) => step.TMCs).forEach((tmc) {
+        _controller.addPolyline((PolylineOptions(
+          latLngList: tmc.polyline,
+          width: 15,
+          lineJoinType: PolylineOptions.LINE_JOIN_MITER,
+          lineCapType: PolylineOptions.LINE_CAP_TYPE_ROUND,
+//          color: _getTmcColor(tmc.status),
+        )));
+      });
+
+      _controller.zoomToSpan(allPoint);
+    });
   }
 
   @override
