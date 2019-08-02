@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/common.dart';
@@ -11,7 +10,7 @@ import 'package:flutter_grab/create_map/ddai_map.dart';
 import 'package:flutter_grab/manager/account_manager.dart';
 import 'package:flutter_grab/pages/publish.dart';
 import 'package:package_info/package_info.dart';
-
+import 'package:flutter_grab/manager/account_manager.dart';
 import '../manager/main_model.dart';
 import '../test.dart';
 import 'about.dart';
@@ -62,14 +61,14 @@ class MyHomeState extends State<HomePage>
     });
 
     ///弹窗延迟3s弹出
-    Timer(const Duration(seconds: 1), () {
-      if (compareVersion(version, packageInfo.version) > 0 &&
-          compareVersion(buildName.toString(), packageInfo.buildNumber) > 0) {
-        upgradeCard();
-      } else if (showCardUrl != null && showCardGoto != null) {
-        showAdDialogCard();
-      }
-    });
+//    Timer(const Duration(seconds: 1), () {
+//      if (compareVersion(version, packageInfo.version) > 0 &&
+//          compareVersion(buildName.toString(), packageInfo.buildNumber) > 0) {
+//        upgradeCard();
+//      } else if (showCardUrl != null && showCardGoto != null) {
+//        showAdDialogCard();
+//      }
+//    });
   }
 
   ///判断升级弹窗是否可关闭
@@ -85,6 +84,7 @@ class MyHomeState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+
     initValue();
     // Initialize the Tab Controller
     controller = new TabController(length: 2, vsync: this);
@@ -102,10 +102,8 @@ class MyHomeState extends State<HomePage>
   String getTitle() {
     if (page == 0) {
       return "车找人";
-    } else if (page == 1) {
-      return "人找车";
     } else {
-      return "关于无忧车道";
+      return "人找车";
     }
   }
 
@@ -179,16 +177,22 @@ class MyHomeState extends State<HomePage>
         children: <Widget>[
           UserAccountsDrawerHeader(
             //Material内置控件
-            accountName: Text(model.userInfo?.nickName ?? ""), //用户名
-            accountEmail: Text(model.userInfo?.profile ?? ""), //用户邮箱
+            accountName: Text(model.userInfo?.nickName ?? ''), //用户名
+            accountEmail: Text(model.userInfo?.profile ?? ''), //用户邮箱
             currentAccountPicture: GestureDetector(
               //用户头像
-              onTap: null,
-              child: CircleAvatar(
-//                    backgroundImage: new AssetImage('images/icon.jpeg'),
-                backgroundImage:
-                    CachedNetworkImageProvider(model.userInfo?.avatar ?? ""),
-              ),
+              onTap: () {
+                if (model.userInfo != null) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => EditProfilePage()));
+                } else {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                }
+              },
+              child: _drawerAratar(),
             ),
           ),
           ListTile(
@@ -211,19 +215,49 @@ class MyHomeState extends State<HomePage>
                 _gotoAbout();
               }),
           Divider(), //分割线控件
-          ListTile(
-            title: Text('退出登录'),
-            trailing: Icon(Icons.exit_to_app),
-            onTap: () {
-              AccountManager.logout().then((_) {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              });
-            }, //点击后收起侧边栏
-          ),
+          _drawerLoginInOut(),
         ],
       ),
     );
+  }
+
+  _drawerLoginInOut() {
+    if (model.userInfo != null) {
+      return ListTile(
+        title: Text('退出登录'),
+        trailing: Icon(Icons.exit_to_app),
+        onTap: () {
+          AccountManager.logout().then((_) {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          });
+        }, //点击后收起侧边栏
+      );
+    } else {
+      return ListTile(
+        title: Text('账号登陆'),
+        trailing: Icon(Icons.assignment_ind),
+        onTap: () {
+          AccountManager.logout().then((_) {
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          });
+        }, //点击后收起侧边栏
+      );
+    }
+  }
+
+  _drawerAratar() {
+    if (model.userInfo != null) {
+      return CircleAvatar(
+        backgroundImage:
+            CachedNetworkImageProvider(model.userInfo?.avatar ?? ""),
+      );
+    } else {
+      return CircleAvatar(
+        backgroundImage: new AssetImage('images/icon.jpeg'),
+      );
+    }
   }
 
   _comparePlatform() {
