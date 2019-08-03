@@ -87,7 +87,7 @@ class MyHomeState extends State<HomePage>
 
     initValue();
     // Initialize the Tab Controller
-    controller = new TabController(length: 2, vsync: this);
+    controller = TabController(length: 2, vsync: this);
     controller.addListener(() {
       print("DDAI= controller.index=${controller.index}");
       setState(() {
@@ -148,7 +148,7 @@ class MyHomeState extends State<HomePage>
         bottomNavigationBar: BottomAppBar(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           notchMargin: 4.0,
-          child: new TabBar(
+          child: TabBar(
             tabs: <Tab>[
               Tab(icon: Icon(Icons.directions_car, color: colorPrimary)),
               Tab(icon: Icon(Icons.record_voice_over, color: colorPrimary)),
@@ -164,7 +164,7 @@ class MyHomeState extends State<HomePage>
     return TabBarView(
       children: <Widget>[
         Test ? TestPage() : FirstTab(),
-        new SecondTab(),
+        SecondTab(),
       ],
       controller: controller,
     );
@@ -175,25 +175,17 @@ class MyHomeState extends State<HomePage>
       //侧边栏按钮Drawer
       child: ListView(
         children: <Widget>[
-          UserAccountsDrawerHeader(
-            //Material内置控件
-            accountName: Text(model.userInfo?.nickName ?? ''), //用户名
-            accountEmail: Text(model.userInfo?.profile ?? ''), //用户邮箱
-            currentAccountPicture: GestureDetector(
-              //用户头像
-              onTap: () {
-                if (model.userInfo != null) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EditProfilePage()));
-                } else {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
-                }
-              },
-              child: _drawerAratar(),
-            ),
+          DrawerHeader(
+            padding: EdgeInsets.zero,
+            child: Stack(children: <Widget>[
+              Align(
+                alignment: FractionalOffset.bottomLeft,
+                child: Container(
+                    height: 70.0,
+                    margin: EdgeInsets.only(left: 12.0, bottom: 12.0),
+                    child: _drawerHeader()),
+              ),
+            ]),
           ),
           ListTile(
               title: Text('发布历史'),
@@ -247,15 +239,83 @@ class MyHomeState extends State<HomePage>
     }
   }
 
-  _drawerAratar() {
+  _drawerHeader() {
     if (model.userInfo != null) {
-      return CircleAvatar(
-        backgroundImage:
-            CachedNetworkImageProvider(model.userInfo?.avatar ?? ""),
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => EditProfilePage()));
+            },
+            child: CircleAvatar(
+              backgroundImage:
+                  CachedNetworkImageProvider(model.userInfo?.avatar ?? ""),
+              radius: 35,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 6.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // 水平方向左对齐
+              mainAxisAlignment: MainAxisAlignment.center, // 竖直方向居中
+              children: <Widget>[
+                Text(
+                  model.userInfo?.nickName ?? '',
+                  style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black),
+                ),
+                Text(
+                  model.userInfo?.profile ?? '',
+                  style: TextStyle(fontSize: 14.0, color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     } else {
-      return CircleAvatar(
-        backgroundImage: new AssetImage('images/icon.jpeg'),
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LoginPage()));
+            },
+            child: CircleAvatar(
+              backgroundImage: AssetImage('images/icon.jpeg'),
+              radius: 35,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 6.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // 水平方向左对齐
+              mainAxisAlignment: MainAxisAlignment.center, // 竖直方向居中
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));
+                  },
+                  child: Text(
+                    "点击登录",
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     }
   }
@@ -361,13 +421,13 @@ class MyHomeState extends State<HomePage>
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
-                child: new Text('是'),
+                child: Text('是'),
               ),
               FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop(false);
                 },
-                child: new Text('否'),
+                child: Text('否'),
               ),
             ],
           ),
