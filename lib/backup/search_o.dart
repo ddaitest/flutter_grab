@@ -77,13 +77,13 @@ class MyCustomFormState extends State<MyCustomForm> {
       _fromTime.minute,
     );
 
-    model.updateSearchCondition(
-        pageType,
-        new SearchCondition(
-            pickup: myControllerStart.text,
-            dropoff: myControllerEnd.text,
-            time: x.millisecondsSinceEpoch));
-    Navigator.pop(context);
+//    model.updateSearchCondition(
+//        pageType,
+//        new SearchCondition(
+//            pickup: myControllerStart.,
+//            dropoff: myControllerEnd,
+//            time: x.millisecondsSinceEpoch));
+//    Navigator.pop(context);
   }
 
   @override
@@ -95,10 +95,10 @@ class MyCustomFormState extends State<MyCustomForm> {
       var condition = model.getSearchCondition(pageType);
       if (condition != null) {
         if (condition.pickup != null) {
-          myControllerStart.text = condition.pickup;
+//          myControllerStart.text = condition.pickup;
         }
         if (condition.dropoff != null) {
-          myControllerEnd.text = condition.dropoff;
+//          myControllerEnd.text = condition.dropoff;
         }
         if (condition.time != null) {
           setState(() {

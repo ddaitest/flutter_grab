@@ -228,31 +228,19 @@ class MyCustomFormState extends State<MyCustomForm> {
               ),
             ),
             SizedBox(height: 30),
-            MaterialButton(
-              height: 55,
-              elevation: 4,
-              color: colorPrimary,
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  if (myControllerStart.text.isEmpty) {
-                    showSnackBar(context, "请选择出发点");
-                    return;
-                  }
-                  if (myControllerEnd.text.isEmpty) {
-                    showSnackBar(context, "请选择到打点");
-                    return;
-                  }
-                  _doPublish();
+            getButtonBig("发布", onPressed: () {
+              if (_formKey.currentState.validate()) {
+                if (myControllerStart.text.isEmpty) {
+                  showSnackBar(context, "请选择出发点");
+                  return;
                 }
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(100)),
-              ),
-              child: Text(
-                '发布',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+                if (myControllerEnd.text.isEmpty) {
+                  showSnackBar(context, "请选择到打点");
+                  return;
+                }
+                _doPublish();
+              }
+            }),
           ],
         ),
       ),

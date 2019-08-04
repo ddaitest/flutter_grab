@@ -8,6 +8,7 @@ import 'package:flutter_grab/common/utils.dart';
 import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/create_map/ddai_map.dart';
 import 'package:flutter_grab/manager/account_manager.dart';
+import 'package:flutter_grab/pages/history.dart';
 import 'package:flutter_grab/pages/publish.dart';
 import 'package:package_info/package_info.dart';
 import 'package:flutter_grab/manager/account_manager.dart';
@@ -191,7 +192,8 @@ class MyHomeState extends State<HomePage>
               title: Text('发布历史'),
               trailing: Icon(Icons.history),
               onTap: () {
-                Navigator.of(context).pop();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HistoryPage(model.userInfo.id)));
               }),
           ListTile(
               title: Text('修改个人资料'),

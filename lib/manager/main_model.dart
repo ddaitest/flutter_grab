@@ -8,6 +8,7 @@ import 'package:flutter_grab/manager/api.dart';
 import 'package:flutter_grab/manager/beans.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:amap_base/src/search/model/poi_item.dart';
 
 import 'account_manager.dart';
 import 'beans2.dart';
@@ -113,8 +114,8 @@ class MainModel extends Model {
     } else {
       response = await API2.searchEvents(
         findType,
-        pickup: _findPassenger.pickup,
-        dropOff: _findPassenger.dropoff,
+        pickup: _findPassenger.pickup.adCode,
+        dropOff: _findPassenger.dropoff.adCode,
         time: _findPassenger.time,
         pageNo: pageNo,
         pageSize: PAGE_SIZE,
@@ -165,8 +166,8 @@ class MainModel extends Model {
     } else {
       response = await API2.searchEvents(
         findType,
-        pickup: _findPassenger.pickup,
-        dropOff: _findPassenger.dropoff,
+        pickup: _findPassenger.pickup.adCode,
+        dropOff: _findPassenger.dropoff.adCode,
         time: _findPassenger.time,
         pageNo: pageNo,
         pageSize: PAGE_SIZE,
@@ -313,6 +314,32 @@ class MainModel extends Model {
     }
     return result;
   }
+
+  static Future<Event2> getEventDetail(num eventID) async {
+    Response response = await API2.eventDetail(eventID);
+    final parsed = json.decode(response.data);
+    var resultCode = parsed['code'] ?? 0;
+    var resultData = parsed['data'] ?? 0;
+    bool result = (resultCode == 200 && resultData != null);
+    if (result) {
+      return Event2.fromJson(resultData);
+    }
+    return null;
+  }
+
+  static Future<List<Event2>> history(num uid) async {
+    Response response = await API2.history(uid);
+    final parsed = json.decode(response.data);
+    var resultCode = parsed['code'] ?? 0;
+    final resultData = parsed["data"];
+    if (resultCode == 200 && resultData != null) {
+      final dataList = resultData["list"];
+      if (dataList != null) {
+        return dataList.map<Event2>((json) => Event2.fromJson(json)).toList();
+      }
+    }
+    return null;
+  }
 }
 
 ///搜索条件
@@ -324,10 +351,10 @@ class SearchCondition extends Equatable {
   num time;
 
   ///起点
-  String pickup = "";
+  PoiItem pickup;
 
   ///终点
-  String dropoff = "";
+  PoiItem dropoff;
 }
 
 int intFromPageType(PageType type) => (type == PageType.FindVehicle) ? 1 : 2;

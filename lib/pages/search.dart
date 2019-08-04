@@ -75,8 +75,8 @@ class MyCustomFormState extends State<MyCustomForm> {
     model.updateSearchCondition(
         pageType,
         new SearchCondition(
-            pickup: startSelected.adCode,
-            dropoff: endSelected.adCode,
+            pickup: startSelected,
+            dropoff: endSelected,
             time: x.millisecondsSinceEpoch));
     Navigator.pop(context);
   }
@@ -90,10 +90,12 @@ class MyCustomFormState extends State<MyCustomForm> {
       var condition = model.getSearchCondition(pageType);
       if (condition != null) {
         if (condition.pickup != null) {
-          myControllerStart.text = condition.pickup;
+          myControllerStart.text =
+              '${condition.pickup.cityName}${condition.pickup.adName}${condition.pickup.title}';
         }
         if (condition.dropoff != null) {
-          myControllerEnd.text = condition.dropoff;
+          myControllerEnd.text =
+              '${condition.dropoff.cityName}${condition.dropoff.adName}${condition.dropoff.title}';
         }
         if (condition.time != null) {
           setState(() {
@@ -180,31 +182,19 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           ),
           SizedBox(height: 30),
-          MaterialButton(
-            height: 55,
-            elevation: 4,
-            color: colorPrimary,
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                if (myControllerStart.text.isEmpty) {
-                  showSnackBar(context, "请选择出发点");
-                  return;
-                }
-                if (myControllerEnd.text.isEmpty) {
-                  showSnackBar(context, "请选择到打点");
-                  return;
-                }
-                _search();
+          getButtonBig("搜索", onPressed: () {
+            if (_formKey.currentState.validate()) {
+              if (myControllerStart.text.isEmpty) {
+                showSnackBar(context, "请选择出发点");
+                return;
               }
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(100)),
-            ),
-            child: Text(
-              '发布',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+              if (myControllerEnd.text.isEmpty) {
+                showSnackBar(context, "请选择到打点");
+                return;
+              }
+              _search();
+            }
+          }),
         ],
       ),
     );

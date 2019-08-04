@@ -12,6 +12,8 @@ import 'package:flutter_grab/manager/main_model.dart';
 import 'package:flutter_grab/pages/search.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
+import 'detail.dart';
+
 class BasePage extends StatefulWidget {
   final PageType pageType; //false if vehicle.
 
@@ -238,7 +240,10 @@ class BasePageState extends State<BasePage> with AutomaticKeepAliveClientMixin {
         delegate: SliverChildBuilderDelegate(
       (BuildContext context, int index) => index == data.length
           ? _getLoadMore()
-          : ItemView2(data[index], index, 0),
+          : ItemView2(data[index], () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DetailPage(data[index])));
+            }),
       childCount: enablePullUp ? data.length + 1 : data.length,
     ));
   }

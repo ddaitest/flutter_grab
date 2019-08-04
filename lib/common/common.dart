@@ -14,6 +14,7 @@ final TextStyle fontCall =
 
 final dateFormat = DateFormat("M月d日");
 final timeFormat = DateFormat("HH:mm");
+final datetimeFormat = DateFormat("M月d日 HH:mm");
 
 enum PageType { FindPassenger, FindVehicle }
 
@@ -30,11 +31,11 @@ String getDesc(SearchCondition condition) {
     var time = DateFormat("M月d日 HH:mm").format(dt);
     result = result + "$time";
   }
-  if (condition.pickup != null && condition.pickup.isNotEmpty) {
-    result = result + " 从:${condition.pickup} ";
+  if (condition.pickup != null && condition.pickup.adName.isNotEmpty) {
+    result = result + " 从:${condition.pickup.adName} ";
   }
-  if (condition.dropoff != null && condition.dropoff.isNotEmpty) {
-    result = result + " 到:${condition.dropoff}";
+  if (condition.dropoff != null && condition.dropoff.adName.isNotEmpty) {
+    result = result + " 到:${condition.dropoff.adName}";
   }
   return result;
 }

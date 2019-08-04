@@ -199,4 +199,19 @@ class API2 {
   static Future<Response> publish(Map<String, String> body) {
     return dio.post("user/back/publishtemplate/add", queryParameters: body);
   }
+
+  static Future<Response> eventDetail(num id) {
+    var params = Map<String, dynamic>();
+    params['publishId'] = id;
+    return dio.post("user/front/publishtemplate/getDetailById",
+        queryParameters: params);
+  }
+
+  static Future<Response> history(num id) {
+    var params = Map<String, dynamic>();
+    params['userId'] = id;
+    params['pageNo'] = 1;
+    params['pageSize'] = 50;
+    return dio.post("user/back/publishtemplate/list", queryParameters: params);
+  }
 }

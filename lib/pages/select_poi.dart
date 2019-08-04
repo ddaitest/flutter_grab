@@ -68,15 +68,18 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _getDropdown(),
-        TextFormField(
-          decoration: getDecoration("搜索："),
-          controller: myControllerStart,
-        ),
-        Expanded(child: _getlist()),
-      ],
+    return Padding(
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: <Widget>[
+          _getDropdown(),
+          TextFormField(
+            decoration: getDecoration("搜索："),
+            controller: myControllerStart,
+          ),
+          Expanded(child: _getlist()),
+        ],
+      ),
     );
   }
 
@@ -170,9 +173,9 @@ class MyCustomFormState extends State<MyCustomForm> {
       requireExtension: true,
     ))
         .then((result) {
-          result.pois.forEach((v){
-            print("xxx = ${v.adCode}");
-          });
+      result.pois.forEach((v) {
+        print("xxx = ${v.adCode}");
+      });
 //      if (result.pois != null && result.pois.length > 0) {
 //        print("Result0 = ${result.pois[0].toString()}");
 //      }

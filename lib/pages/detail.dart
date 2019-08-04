@@ -4,15 +4,11 @@ import 'package:flutter_grab/common/common.dart';
 import 'package:flutter_grab/common/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_grab/common/theme.dart';
+import 'package:flutter_grab/common/widget/info_view.dart';
 import 'package:flutter_grab/common/widget/page_title.dart';
 import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/common/amapLoad.dart';
-
-//const Color c4 = Color(0xFF13D3CE);
-//const Color c5 = Color(0xFFFF7200);
-//final TextStyle mainTitleFont = const TextStyle(
-//  fontSize: 18,
-//);
+import 'package:flutter_grab/manager/main_model.dart';
 
 class DetailPage extends StatefulWidget {
   final Event2 event;
@@ -20,23 +16,33 @@ class DetailPage extends StatefulWidget {
   DetailPage(this.event);
 
   @override
-  State<DetailPage> createState() {
-    return DetailState()..event = event;
+  State<StatefulWidget> createState() {
+    return _DetailState(event);
   }
 }
 
-class DetailState extends State<DetailPage> {
+class _DetailState extends State<DetailPage> {
+  _DetailState(this.event);
+
   Event2 event;
-  String adForDetailUrl =
-      'https://img.zcool.cn/community/012de8571049406ac7251f05224c19.png@1280w_1l_2o_100sh.png';
-  LatLng start = LatLng(39.985953, 116.464719);
-  LatLng end = LatLng(39.983541, 116.46737);
+
+//  String adForDetailUrl =
+//      'https://img.zcool.cn/community/012de8571049406ac7251f05224c19.png@1280w_1l_2o_100sh.png';
   AMapController _controller;
+
+  String seat;
+  String remark;
 
   @override
   void initState() {
     super.initState();
-//    _line();
+    _refreshData();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,14 +58,12 @@ class DetailState extends State<DetailPage> {
   Widget _getBody() {
     return Column(
       children: <Widget>[
-        Flexible(
+        Expanded(
           child: AMapView(
             onAMapViewCreated: (controller) {
-              setState(() => _controller = controller);
-              _controller.markerClickedEvent.listen((marker) {
-                Scaffold.of(context)
-                    .showSnackBar(SnackBar(content: Text(marker.toString())));
-              });
+              _controller = controller;
+              print("11 _controller=$_controller");
+              _controller.markerClickedEvent.listen((marker) {});
             },
             amapOptions: AMapOptions(
               compassEnabled: false,
@@ -68,8 +72,11 @@ class DetailState extends State<DetailPage> {
             ),
           ),
         ),
-        Flexible(
-          child: _getInfo(),
+        Expanded(child: _getInfo()),
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+          child: _getActionPart(),
         ),
       ],
     );
@@ -79,159 +86,155 @@ class DetailState extends State<DetailPage> {
     final dt = new DateTime.fromMillisecondsSinceEpoch(event.time);
     var date = dateFormat.format(dt);
     var time = timeFormat.format(dt);
-    return ListView(padding: EdgeInsets.all(10.0), children: <Widget>[
-      _getContainer(
-        _getRoadLine(),
-        Icons.location_on,
-      ),
-      _getContainer(
-        Text('$date  $time', style: fontInfo),
-        Icons.access_time,
-      ),
-      _getContainer(
-        Text('${event.money.toString()} 元', style: fontInfo),
-        Icons.attach_money,
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: 25),
-        child: MaterialButton(
-          height: 50,
-          color: Color(0xff5680fa),
-          child: Text(
-            '马上联系 ' + '(' + event.mobile + ')',
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          onPressed: () {
-            loading(
-              context,
-              AMapSearch().calculateDriveRoute(
-                RoutePlanParam(
-                  from: LatLng(39.993291, 116.473188),
-                  to: LatLng(39.940474, 116.355426),
-                ),
-              ),
-            ).then((result) {
-              final allPoint = result.paths[0].steps
-                  .expand((step) => step.polyline)
-                  .toList();
-
-              result.paths[0].steps.expand((step) => step.TMCs).forEach((tmc) {
-                _controller.addPolyline((PolylineOptions(
-                    latLngList: tmc.polyline,
-                    width: 15,
-                    lineJoinType: PolylineOptions.LINE_JOIN_MITER,
-                    lineCapType: PolylineOptions.LINE_CAP_TYPE_ROUND,
-                    color: Colors.green)));
-              });
-
-              _controller.zoomToSpan(allPoint);
-            });
-//            launchcaller('tel:' + event.mobile);
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
-        ),
-      ),
-    ]);
-  }
-
-  ///判断是否有广告数据才展示
-  _adJudge() {
-    if (adForDetailUrl != null) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 25),
-        child: GestureDetector(
-          child: Image(
-            image: CachedNetworkImageProvider(adForDetailUrl),
-            fit: BoxFit.fill,
-            width: 500,
-            height: 400,
-          ),
-        ),
-      );
-    }
-  }
-
-  ///list中的通用样式
-  Widget _getContainer(var title, IconData leadIcon, {IconData trailIcon}) {
     return Container(
-        padding: const EdgeInsets.all(5),
-        child: Card(
-          child: ListTile(
-            dense: true,
-            leading: Icon(leadIcon),
-            trailing: Icon(trailIcon),
-            title: title,
+      child: ListView(children: <Widget>[
+        Container(
+          decoration: getContainerBg2(),
+          margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: <Widget>[
+              _getHeader(),
+              PADDING,
+              InfoView(
+                  icon: Icons.trip_origin,
+                  color: colorPick,
+                  info: event.start,
+                  style: textStyleInfo), //起点
+              PADDING,
+              InfoView(
+                  icon: Icons.trip_origin,
+                  color: colorDrop,
+                  info: event.end,
+                  style: textStyleInfo), //终点
+              PADDING,
+              _getDateTime(), //出发时间
+              PADDING,
+              InfoView(
+                  icon: Icons.search,
+                  color: colorDrop,
+                  info: event.publishType == 1 ? "人找车" : "车找人",
+                  style: textStyleInfo), //找人？找车？
+              PADDING,
+              InfoView(
+                  icon: Icons.payment,
+                  color: colorDrop,
+                  info: "价格 ¥${event.money}",
+                  style: textStyleInfo), //价格
+              PADDING,
+              InfoView(
+                  icon: Icons.code,
+                  color: colorDrop,
+                  info: event.publishType == 1 ? "普通拼车" : "长期拼车",
+                  style: textStyleInfo), //备注
+              PADDING,
+              InfoView(
+                  icon: Icons.airline_seat_recline_normal,
+                  color: colorDrop,
+                  info: "座位 $seat",
+                  style: textStyleInfo), //备注
+              PADDING,
+              InfoView(
+                  icon: Icons.insert_comment,
+                  color: colorDrop,
+                  info: "备注 $remark",
+                  style: textStyleInfo), //备注
+              PADDING,
+            ],
           ),
-        ));
-  }
-
-  ///位置样式
-  _getRoadLine() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
-          child:
-              _getInfoView(Icons.trip_origin, colorPick, event.start, fontInfo),
-        ),
-        _getInfoView(Icons.trip_origin, colorDrop, event.end, fontInfo),
-      ],
+        )
+      ]),
     );
+    //座位，，备注，
   }
 
-  ///公用ICON + TEXT
-  _getInfoView(IconData icon, Color color, String info, TextStyle style) {
+  Widget _getActionPart() {
+    return getButtonBig("马上联系 ${event.mobile}",
+        onPressed: () => launchcaller('tel:' + event.mobile));
+  }
+
+  _getHeader() {
+    var phone = event.mobile;
+    if (phone.length > 7) {
+      phone = phone.replaceRange(3, 7, "****");
+    }
+
     return Row(
       children: <Widget>[
-        Icon(
-          icon,
-          color: color,
-          size: 14.0,
-        ),
-        SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            info,
-            style: style,
-            textAlign: TextAlign.left,
-          ),
-        ),
+        getAvatar(event.avatar), //头像
+        PADDING_H,
+        Expanded(child: Text(phone, style: fontPhone), flex: 2), //电话
       ],
     );
   }
 
-  _line() {
-    loading(
-      context,
-      AMapSearch().calculateDriveRoute(
-        RoutePlanParam(
-          from: LatLng(39.993291, 116.473188),
-          to: LatLng(39.940474, 116.355426),
-        ),
-      ),
-    ).then((result) {
-      final allPoint =
-          result.paths[0].steps.expand((step) => step.polyline).toList();
+  ///出发时间
+  _getDateTime() {
+    final dt = DateTime.fromMillisecondsSinceEpoch(event.time);
+    var date = datetimeFormat.format(dt);
+    return InfoView(
+      icon: Icons.access_time,
+      color: c3,
+      info: date,
+    );
+  }
 
-      result.paths[0].steps.expand((step) => step.TMCs).forEach((tmc) {
-        _controller.addPolyline((PolylineOptions(
-          latLngList: tmc.polyline,
-          width: 15,
-          lineJoinType: PolylineOptions.LINE_JOIN_MITER,
-          lineCapType: PolylineOptions.LINE_CAP_TYPE_ROUND,
-//          color: _getTmcColor(tmc.status),
-        )));
+  LatLng _parserLatLng(String text) {
+    List<String> x = text.split(",");
+    if (x.length == 2) {
+      return LatLng(double.tryParse(x[1]), double.tryParse(x[0]));
+    }
+    return null;
+  }
+
+  _refreshData() {
+    MainModel.getEventDetail(event.id).then((ev) {
+      print("_refreshData = $ev");
+      _drawMap(ev);
+      setState(() {
+        seat = "${ev.seat ?? ""}";
+        remark = "${ev.remark ?? ""}";
       });
-
-      _controller.zoomToSpan(allPoint);
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  _drawMap(Event2 ev) {
+    LatLng start = _parserLatLng(ev.startAt);
+    LatLng end = _parserLatLng(ev.endAt);
+    List<MarkerOptions> markers = [];
+    if (start != null) {
+      markers.add(MarkerOptions(
+        icon: 'images/start.png',
+        position: start,
+        title: ev.start,
+        snippet: ev.startCity,
+      ));
+    }
+    if (end != null) {
+      markers.add(MarkerOptions(
+        icon: 'images/end.png',
+        position: end,
+        title: ev.end,
+        snippet: ev.endCity,
+      ));
+    }
+    if (markers.length > 0) {
+      _controller.addMarkers(markers);
+    }
+    if (start != null && end != null) {
+      loading(
+        context,
+        AMapSearch().calculateDriveRoute(RoutePlanParam(from: start, to: end)),
+      ).then((result) {
+        result.paths[0].steps.expand((step) => step.TMCs).forEach((tmc) {
+          _controller.addPolyline((PolylineOptions(
+            latLngList: tmc.polyline,
+            width: 15,
+            lineJoinType: PolylineOptions.LINE_JOIN_MITER,
+            lineCapType: PolylineOptions.LINE_CAP_TYPE_ROUND,
+          )));
+        });
+      });
+    }
   }
 }

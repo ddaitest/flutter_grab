@@ -138,23 +138,11 @@ class MyCustomFormState extends State<MyCustomForm> {
             ),
           ),
           SizedBox(height: 30),
-          MaterialButton(
-            height: 55,
-            elevation: 4,
-            color: colorPrimary,
-            onPressed: () {
-              if (_formKey.currentState.validate()) {
-                _search();
-              }
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(100)),
-            ),
-            child: Text(
-              '提交',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+          getButtonBig("确认", onPressed: () {
+            if (_formKey.currentState.validate()) {
+              _search();
+            }
+          }),
         ],
       ),
     );

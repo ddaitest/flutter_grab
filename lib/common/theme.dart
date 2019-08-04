@@ -23,7 +23,7 @@ const Color c3 = Color(0xFFD8D8D8);
 const TextStyle fontPhone =
     const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500, color: c1);
 
-const TextStyle fontInfo = const TextStyle(fontSize: 16.0, color: c2);
+const TextStyle textStyleInfo = const TextStyle(fontSize: 16.0, color: c2);
 
 const TextStyle fontTime1 = const TextStyle(fontSize: 16.0, color: c3);
 const TextStyle fontTime2 = const TextStyle(fontSize: 16.0, color: colorPick);
@@ -87,4 +87,33 @@ BoxDecoration getContainerBg(double radius) {
           spreadRadius: 5.0,
         )
       ]);
+}
+
+///列表中 每个ITEM Container 背景的样式
+BoxDecoration getContainerBg2({double radius}) {
+  return BoxDecoration(
+      borderRadius: BorderRadius.circular(radius ?? 10.0),
+      border: Border.all(color: Colors.grey[400], width: 0.5),
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey[200],
+          blurRadius: 10.0,
+        )
+      ]);
+}
+
+const PADDING = SizedBox(height: 8);
+const PADDING_H = SizedBox(width: 8);
+
+MaterialButton getButtonBig(String text, {VoidCallback onPressed}) {
+  return MaterialButton(
+    height: 55,
+    elevation: 4,
+    color: colorPrimary,
+    onPressed: onPressed,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(100))),
+    child: Text(text, style: TextStyle(color: Colors.white)),
+  );
 }

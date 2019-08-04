@@ -6,12 +6,16 @@ import 'package:flutter_grab/manager/beans.dart';
 import 'package:flutter_grab/manager/beans2.dart';
 import 'package:flutter_grab/pages/detail.dart';
 
+import 'widget/info_view.dart';
+
 class ItemView2 extends StatelessWidget {
   final Event2 event;
-  final int index;
-  final int type;
+  final Function onTap;
 
-  ItemView2(this.event, this.index, this.type) {
+//  final int index;
+//  final int type;
+
+  ItemView2(this.event, this.onTap) {
 //    remark = "价格：${event.money}";
   }
 
@@ -20,17 +24,7 @@ class ItemView2 extends StatelessWidget {
     String remark = "价格：${event.money} 元";
     return GestureDetector(
       child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
-            border: Border.all(color: Colors.grey[400], width: 0.5),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey[200],
-                blurRadius: 10.0,
-//                  spreadRadius: 1.0,
-              )
-            ]),
+        decoration: getContainerBg2(),
         margin: EdgeInsets.only(top: 20, left: 20, right: 20),
         padding: EdgeInsets.all(16),
         child: Column(
@@ -39,38 +33,33 @@ class ItemView2 extends StatelessWidget {
           children: event.money != null && event.money > 0
               ? <Widget>[
                   _getHeader(),
-                  _getPadding(),
+                  PADDING,
                   _getPickup(),
-                  _getPadding(),
+                  PADDING,
                   _getDropoff(),
-                  _getPadding(),
+                  PADDING,
                   _getDateTime(),
-                  _getPadding(),
+                  PADDING,
                   _getRemark(remark),
                 ]
               : <Widget>[
                   _getHeader(),
-                  _getPadding(),
+                  PADDING,
                   _getPickup(),
-                  _getPadding(),
+                  PADDING,
                   _getDropoff(),
-                  _getPadding(),
+                  PADDING,
                   _getDateTime(),
                 ],
         ),
       ),
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => DetailPage(event)));
-      },
+      onTap: () => onTap(),
     );
   }
 
-  _getPadding() => SizedBox(height: 8);
-
   /// 第一行: 头像, 电话, Action
   _getHeader() {
-    var phone = event.mobile;
+    var phone = event.mobile ?? "";
     if (phone.length > 7) {
       phone = phone.replaceRange(3, 7, "****");
     }
@@ -78,7 +67,7 @@ class ItemView2 extends StatelessWidget {
     return Row(
       children: <Widget>[
         _getAvatar(), //头像
-        SizedBox(width: 8),
+        PADDING_H,
         Expanded(
           child: Text(
             phone,
@@ -87,68 +76,37 @@ class ItemView2 extends StatelessWidget {
           flex: 2,
         ), //电话
         _getAction(), //打电话
-//        _getAvatar(),
       ],
     );
   }
 
   ///起点
-  _getPickup() =>
-      _getInfoView(Icons.trip_origin, colorPick, event.start, fontInfo);
+  _getPickup() => InfoView(
+      icon: Icons.trip_origin,
+      color: colorPick,
+      info: event.start,
+      style: textStyleInfo);
 
   ///终点
-  _getDropoff() =>
-      _getInfoView(Icons.trip_origin, colorDrop, event.end, fontInfo);
+  _getDropoff() => InfoView(
+      icon: Icons.trip_origin,
+      color: colorDrop,
+      info: event.end,
+      style: textStyleInfo);
 
   ///出发时间
   _getDateTime() {
-    final dt = new DateTime.fromMillisecondsSinceEpoch(event.time);
-//    return _getInfoView(Icons.access_time, Color(0xFFC7C7C7),
-//        new DateFormat("HH:mm  y年M月d日").format(dt), fontTime1);
+    final dt = DateTime.fromMillisecondsSinceEpoch(event.time);
     var date = dateFormat.format(dt);
     var time = timeFormat.format(dt);
-    return Row(
-      children: <Widget>[
-        Icon(
-          Icons.access_time,
-          color: c3,
-          size: 14.0,
-        ),
-        SizedBox(width: 6),
-        Text(
-          date,
-          style: fontTime1,
-          textAlign: TextAlign.left,
-        ),
-        SizedBox(width: 6),
+    return InfoView(
+      icon: Icons.access_time,
+      color: c3,
+      childs: <Widget>[
+        Text(date, style: fontTime1, textAlign: TextAlign.left),
+        PADDING_H,
         Expanded(
-          child: Text(
-            time,
-            style: fontTime2,
-            textAlign: TextAlign.left,
-          ),
-        ),
-      ],
-    );
-  }
-
-  ///公用ICON + TEXT
-  _getInfoView(IconData icon, Color color, String info, TextStyle style) {
-    return Row(
-      children: <Widget>[
-        Icon(
-          icon,
-          color: color,
-          size: 14.0,
-        ),
-        SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            info ?? "info",
-            style: style,
-            textAlign: TextAlign.left,
-          ),
-        ),
+            child: Text(time, style: fontTime2, textAlign: TextAlign.left)),
       ],
     );
   }
@@ -157,9 +115,9 @@ class ItemView2 extends StatelessWidget {
   _getRemark(String remark) => Text(remark, style: fontX);
 
   ///头像
-  _getAvatar() {
-    return getRoundIcon(getIcon(type));
-  }
+  _getAvatar() => getAvatar(event.avatar ?? "");
+
+//    return getRoundIcon(getIcon(type));
 
   ///打电话
   _getAction() {

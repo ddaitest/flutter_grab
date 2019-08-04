@@ -91,4 +91,5 @@ class Event2 {
       ..id = json["id"]
       ..remark = json["remark"];
   }
+
 }

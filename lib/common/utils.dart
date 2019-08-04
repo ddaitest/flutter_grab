@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grab/common/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,12 +15,29 @@ void launchcaller(String url) async {
 getRoundIcon(IconData icon) {
   return Container(
     width: 36,
-//    margin: EdgeInsets.only(left: 16, right: 16),
     height: 36,
     child: Icon(
       icon,
       color: Colors.white,
       size: 22,
+    ),
+    decoration: BoxDecoration(
+      color: colorPrimary,
+      shape: BoxShape.circle,
+      border: Border.all(color: colorPrimary, width: 2),
+    ),
+  );
+}
+
+Widget getAvatar(String url, {int size}) {
+  return Container(
+    width: 36,
+    height: 36,
+    child: CachedNetworkImage(
+      imageUrl: url,
+      height: size ?? 22,
+      width: size ?? 22,
+      color: Colors.white,
     ),
     decoration: BoxDecoration(
       color: colorPrimary,
