@@ -67,10 +67,9 @@ class AboutPageState extends State<AboutPage> {
       children: <Widget>[
         Column(
           children: <Widget>[
-            Image.asset(
-              'images/icon.jpeg',
-              width: 100,
-              height: 100,
+            CircleAvatar(
+              backgroundImage: AssetImage('images/icon.jpeg'),
+              radius: 45,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
