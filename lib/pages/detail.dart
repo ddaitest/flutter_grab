@@ -161,7 +161,7 @@ class _DetailState extends State<DetailPage> {
 
     return Row(
       children: <Widget>[
-        getAvatar(event.avatar), //头像
+        getMainIcon(event.publishType), //头像
         PADDING_H,
         Expanded(child: Text(phone, style: fontPhone), flex: 2), //电话
       ],

@@ -192,8 +192,10 @@ class MyHomeState extends State<HomePage>
               title: Text('发布历史'),
               trailing: Icon(Icons.history),
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HistoryPage(model.userInfo.id)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HistoryPage(model.userInfo.id)));
               }),
           ListTile(
               title: Text('修改个人资料'),

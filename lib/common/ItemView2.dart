@@ -115,7 +115,7 @@ class ItemView2 extends StatelessWidget {
   _getRemark(String remark) => Text(remark, style: fontX);
 
   ///头像
-  _getAvatar() => getAvatar(event.avatar ?? "");
+  _getAvatar() => getMainIcon(event.publishType ?? "");
 
 //    return getRoundIcon(getIcon(type));
 

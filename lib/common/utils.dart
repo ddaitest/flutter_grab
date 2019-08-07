@@ -47,6 +47,40 @@ Widget getAvatar(String url, {int size}) {
   );
 }
 
+Widget getMainIcon(int publishType, {int size}) {
+  if (publishType != 1) {
+    return Container(
+      width: 36,
+      height: 36,
+      child: Icon(
+        Icons.directions_car,
+        color: Colors.white,
+        size: 22,
+      ),
+      decoration: BoxDecoration(
+        color: colorPrimary,
+        shape: BoxShape.circle,
+        border: Border.all(color: colorPrimary, width: 2),
+      ),
+    );
+  } else {
+    return Container(
+      width: 36,
+      height: 36,
+      child: Icon(
+        Icons.record_voice_over,
+        color: Colors.white,
+        size: 22,
+      ),
+      decoration: BoxDecoration(
+        color: colorPrimary,
+        shape: BoxShape.circle,
+        border: Border.all(color: colorPrimary, width: 2),
+      ),
+    );
+  }
+}
+
 /// return A positive number if a>b , negative number if a<b , 0 if a=b
 int compareVersion(String a, String b) {
   var as = a.split(".").map((string) => int.tryParse(string));

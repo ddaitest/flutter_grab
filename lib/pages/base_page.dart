@@ -241,8 +241,10 @@ class BasePageState extends State<BasePage> with AutomaticKeepAliveClientMixin {
       (BuildContext context, int index) => index == data.length
           ? _getLoadMore()
           : ItemView2(data[index], () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => DetailPage(data[index])));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailPage(data[index])));
             }),
       childCount: enablePullUp ? data.length + 1 : data.length,
     ));
@@ -278,7 +280,7 @@ class BasePageState extends State<BasePage> with AutomaticKeepAliveClientMixin {
             SizedBox(height: 50, width: 20),
             Icon(
               Icons.search,
-              color: Theme.of(context).primaryColor,
+              color: colorPrimary,
             ),
             SizedBox(width: 10),
             Text(
